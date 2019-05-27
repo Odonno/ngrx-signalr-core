@@ -1,6 +1,6 @@
 {
   "name": "ngrx-signalr-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library to handle realtime SignalR Core events using angular and rxjs",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -22,17 +22,13 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@angular/common": "^7.2.15",
-    "@angular/core": "^7.2.15",
-    "@aspnet/signalr": "^1.1.4",
-    "@ngrx/effects": "^7.4.0",
-    "@ngrx/store": "^7.4.0",
-    "rxjs": "^6.5.2"
+    "@aspnet/signalr": "^1.1.4"
   },
   "peerDependencies": {
     "@angular/common": ">=7.2.0",
     "@angular/core": ">=7.2.0",
     "@ngrx/effects": ">=7.2.0",
-    "@ngrx/store": ">=7.2.0"
+    "@ngrx/store": ">=7.2.0",
+    "rxjs": ">=6.0.0"
   }
 }
