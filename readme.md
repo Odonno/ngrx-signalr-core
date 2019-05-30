@@ -144,6 +144,42 @@ appStarted$ = this.store.select(selectAreAllHubsConnected).pipe(
 );
 ```
 
+### Handling reconnection
+
+Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. Here is an example on how to apply periodic reconnection:
+
+```ts
+@Effect()
+whenDisconnected$ = this.actions$.pipe(
+    ofType<SignalRDisconnectedAction>(SIGNALR_DISCONNECTED),
+    switchMap<SignalRDisconnectedAction, any>(action => {
+        const hub = findHub(action);
+        
+        if (!hub) {
+            return of(initRealtimeFailed(new Error('No SignalR Hub found....')));
+        }
+        
+        return this.store.pipe(
+            select(state => state.app.online),
+            switchMap(online => {
+                if (!online) {
+                     return EMPTY;
+                }
+                
+                return interval(10 * 1000).pipe(
+                    map(_ => reconnectSignalRHub(action.hubName, action.url)),
+                    takeUntil(this.actions$.pipe(ofType(SIGNALR_CONNECTED)))
+                );
+            })
+        );
+    })
+);
+```
+
+In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is disconnected and when there is a network connection.
+
+It has the disadvantage that you need to write another `@Effect` but you also have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
+
 ## Features
 
 ### SignalR Hub
