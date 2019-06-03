@@ -30,3 +30,4 @@ export {
     selectHubStatus,
     selectAreAllHubsConnected
 } from './src/selectors';
+export { StoreSignalRService } from './src/storeSignalrService';
