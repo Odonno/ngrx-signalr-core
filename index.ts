@@ -21,7 +21,7 @@ export {
     reconnectSignalRHub
 } from './src/actions';
 export { SignalREffects } from './src/effects';
-export { SignalRHub, createHub, findHub } from './src/hub';
+export { ISignalRHub, SignalRHub, SignalRTestingHub, createHub, findHub } from './src/hub';
 export { SignalRStates, SignalRHubState, SignalRHubStatus } from './src/hubStatus';
 export { BaseSignalRStoreState, signalrReducer } from './src/reducer';
 export {
@@ -31,3 +31,4 @@ export {
     selectAreAllHubsConnected
 } from './src/selectors';
 export { StoreSignalRService } from './src/storeSignalrService';
+export { testingEnabled, enableTesting } from './src/testing';
