@@ -1,5 +1,6 @@
-import { SignalRAction, SIGNALR_CREATE_HUB, SIGNALR_HUB_UNSTARTED, SIGNALR_CONNECTED, SIGNALR_DISCONNECTED } from "./actions";
 import { SignalRHubStatus, SignalRHubState } from "./hubStatus";
+import { createReducer, on, Action } from "@ngrx/store";
+import { createSignalRHub, signalrHubUnstarted, signalrConnected, signalrDisconnected } from "./actions";
 
 const initialState = {
     hubStatuses: []
@@ -9,62 +10,60 @@ export interface BaseSignalRStoreState {
     hubStatuses: SignalRHubStatus[];
 }
 
-export function signalrReducer(
-    state: BaseSignalRStoreState = initialState,
-    action: SignalRAction
-): BaseSignalRStoreState {
-    switch (action.type) {
-        case SIGNALR_CREATE_HUB:
-            const newHubStatus = {
-                hubName: action.hubName,
-                url: action.url,
-                state: undefined
-            };
+const reducer = createReducer<BaseSignalRStoreState>(
+    initialState,
+    on(createSignalRHub, (state, action) => ({
+        ...state,
+        hubStatuses: state.hubStatuses.concat([{
+            hubName: action.hubName,
+            url: action.url,
+            state: undefined
+        }])
+    })),
+    on(signalrHubUnstarted, (state, action) => {
+        return {
+            ...state,
+            hubStatuses: state.hubStatuses.map(hs => {
+                if (hs.hubName === action.hubName && hs.url === action.url) {
+                    return {
+                        ...hs,
+                        state: 'unstarted' as SignalRHubState
+                    };
+                }
+                return hs;
+            })
+        };
+    }),
+    on(signalrConnected, (state, action) => {
+        return {
+            ...state,
+            hubStatuses: state.hubStatuses.map(hs => {
+                if (hs.hubName === action.hubName && hs.url === action.url) {
+                    return {
+                        ...hs,
+                        state: 'connected' as SignalRHubState
+                    };
+                }
+                return hs;
+            })
+        };
+    }),
+    on(signalrDisconnected, (state, action) => {
+        return {
+            ...state,
+            hubStatuses: state.hubStatuses.map(hs => {
+                if (hs.hubName === action.hubName && hs.url === action.url) {
+                    return {
+                        ...hs,
+                        state: 'disconnected' as SignalRHubState
+                    };
+                }
+                return hs;
+            })
+        };
+    })
+);
 
-            return {
-                ...state,
-                hubStatuses: state.hubStatuses.concat([newHubStatus])
-            };
-        case SIGNALR_HUB_UNSTARTED:
-            return {
-                ...state,
-                hubStatuses: state.hubStatuses.map(hs => {
-                    if (hs.hubName === action.hubName && hs.url === action.url) {
-                        return {
-                            ...hs,
-                            state: 'unstarted' as SignalRHubState
-                        };
-                    }
-                    return hs;
-                })
-            };
-        case SIGNALR_CONNECTED:
-            return {
-                ...state,
-                hubStatuses: state.hubStatuses.map(hs => {
-                    if (hs.hubName === action.hubName && hs.url === action.url) {
-                        return {
-                            ...hs,
-                            state: 'connected' as SignalRHubState
-                        };
-                    }
-                    return hs;
-                })
-            };
-        case SIGNALR_DISCONNECTED:
-            return {
-                ...state,
-                hubStatuses: state.hubStatuses.map(hs => {
-                    if (hs.hubName === action.hubName && hs.url === action.url) {
-                        return {
-                            ...hs,
-                            state: 'disconnected' as SignalRHubState
-                        };
-                    }
-                    return hs;
-                })
-            };
-        default:
-            return state;
-    }
-}
+export function signalrReducer(state: BaseSignalRStoreState | undefined, action: Action) {
+    return reducer(state, action);
+};

@@ -1,7 +1,7 @@
 import { Actions } from "@ngrx/effects";
 import { MonoTypeOperatorFunction } from "rxjs";
-import { SignalRStartHubAction, SignalRReconnectHubAction } from "./actions";
 import { Action } from "@ngrx/store";
+import { SignalRAction } from "./actions";
 interface HubAction extends Action {
     hubName: string;
     url: string;
@@ -14,26 +14,31 @@ export declare function ofHub({ hubName, url }: {
 export declare class SignalREffects {
     private actions$;
     createHub$: import("rxjs").Observable<{
-        type: string;
         hubName: string;
         url: string;
-    }>;
-    beforeStartHub$: import("rxjs").Observable<{
-        type: string;
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/hubUnstarted">>;
+    beforeStartHub$: import("rxjs").Observable<({
         hubName: string;
         url: string;
         error: any;
-    } | {
-        type: string;
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/hubFailedToStart">) | ({
         hubName: string;
         url: string;
-    } | {
-        type: string;
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/connected">) | ({
         hubName: string;
         url: string;
-        error: Error | undefined;
-    } | undefined>;
-    startHub$: import("rxjs").Observable<SignalRStartHubAction | SignalRReconnectHubAction>;
-    constructor(actions$: Actions);
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/disconnected">) | ({
+        hubName: string;
+        url: string;
+        error: any;
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/error">)>;
+    startHub$: import("rxjs").Observable<({
+        hubName: string;
+        url: string;
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/startHub">) | ({
+        hubName: string;
+        url: string;
+    } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/reconnectHub">)>;
+    constructor(actions$: Actions<SignalRAction>);
 }
 export {};

@@ -1,6 +1,6 @@
-import { SignalRAction } from "./actions";
 import { SignalRHubStatus } from "./hubStatus";
+import { Action } from "@ngrx/store";
 export interface BaseSignalRStoreState {
     hubStatuses: SignalRHubStatus[];
 }
-export declare function signalrReducer(state: BaseSignalRStoreState | undefined, action: SignalRAction): BaseSignalRStoreState;
+export declare function signalrReducer(state: BaseSignalRStoreState | undefined, action: Action): BaseSignalRStoreState;
