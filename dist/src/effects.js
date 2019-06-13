@@ -27,6 +27,9 @@ let SignalREffects = class SignalREffects {
         // handle hub creation (then hub unstarted by default)
         this.createHub$ = createEffect(() => this.actions$.pipe(ofType(createSignalRHub), mergeMap(action => {
             const hub = createHub(action.hubName, action.url, action.options);
+            if (!hub) {
+                return EMPTY;
+            }
             return of(signalrHubUnstarted({ hubName: hub.hubName, url: hub.url }));
         })));
         // listen to start result (success/fail)

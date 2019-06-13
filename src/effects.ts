@@ -32,6 +32,10 @@ export class SignalREffects {
             ofType(createSignalRHub),
             mergeMap(action => {
                 const hub = createHub(action.hubName, action.url, action.options);
+                if (!hub) {
+                    return EMPTY;
+                }
+
                 return of(signalrHubUnstarted({ hubName: hub.hubName, url: hub.url }));
             })
         )

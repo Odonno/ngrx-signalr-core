@@ -120,7 +120,7 @@ export abstract class SignalRTestingHub implements ISignalRHub {
         this.state$ = this._stateSubject.asObservable();
         this.error$ = this._errorSubject.asObservable();
     }
-    
+
     start(): Observable<void> {
         timer(100).subscribe(_ => {
             this._startSubject.next();
@@ -129,11 +129,11 @@ export abstract class SignalRTestingHub implements ISignalRHub {
 
         return this._startSubject.asObservable();
     }
-    
+
     abstract on<T>(eventName: string): Observable<T>;
-    
+
     abstract send(methodName: string, ...args: any[]): Observable<any>;
-    
+
     hasSubscriptions(): boolean {
         for (let key in this._subjects) {
             if (this._subjects.hasOwnProperty(key)) {
@@ -156,11 +156,14 @@ export function findHub(x: string | { hubName: string, url: string }, url?: stri
     return hubs.filter(h => h.hubName === x.hubName && h.url === x.url)[0];
 };
 
-export const createHub = (hubName: string, url: string, options?: IHttpConnectionOptions | undefined): ISignalRHub => {
+export const createHub = (hubName: string, url: string, options?: IHttpConnectionOptions | undefined): ISignalRHub | undefined => {
     if (testingEnabled) {
         const hub = hubCreationFunc(hubName, url, options);
-        hubs.push(hub);
-        return hub;
+        if (hub) {
+            hubs.push(hub);
+            return hub;
+        }
+        return undefined;
     }
 
     const hub = new SignalRHub(hubName, url, options);

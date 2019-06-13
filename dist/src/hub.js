@@ -110,8 +110,11 @@ export function findHub(x, url) {
 export const createHub = (hubName, url, options) => {
     if (testingEnabled) {
         const hub = hubCreationFunc(hubName, url, options);
-        hubs.push(hub);
-        return hub;
+        if (hub) {
+            hubs.push(hub);
+            return hub;
+        }
+        return undefined;
     }
     const hub = new SignalRHub(hubName, url, options);
     hubs.push(hub);

@@ -4,5 +4,5 @@ export declare class StoreSignalRService {
         hubName: string;
         url: string;
     }, url?: string | undefined): import("./hub").ISignalRHub | undefined;
-    createHub(hubName: string, url: string, options?: IHttpConnectionOptions | undefined): import("./hub").ISignalRHub;
+    createHub(hubName: string, url: string, options?: IHttpConnectionOptions | undefined): import("./hub").ISignalRHub | undefined;
 }

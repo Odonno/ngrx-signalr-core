@@ -52,4 +52,4 @@ export declare function findHub({ hubName, url }: {
     hubName: string;
     url: string;
 }): ISignalRHub | undefined;
-export declare const createHub: (hubName: string, url: string, options?: IHttpConnectionOptions | undefined) => ISignalRHub;
+export declare const createHub: (hubName: string, url: string, options?: IHttpConnectionOptions | undefined) => ISignalRHub | undefined;
