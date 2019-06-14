@@ -38,54 +38,56 @@ const hub = {
 };
 
 this.store.dispatch(
-    createSignalRHub(hub.name, hub.url)
+    createSignalRHub(hub)
 );
 ```
 
 Then you will create an effect to start listening to events before starting the Hub.
 
 ```ts
-@Effect()
-initRealtime$ = this.actions$.pipe(
-    ofType<SignalRHubUnstartedAction>(SIGNALR_HUB_UNSTARTED),
-    mergeMap<SignalRHubUnstartedAction, any>(action => {
-        const hub = findHub(action);
+initRealtime$ = createEffect(() => 
+    this.actions$.pipe(
+        ofType(SIGNALR_HUB_UNSTARTED),
+        mergeMap(action => {
+            const hub = findHub(action);
 
-        if (!hub) {
-            return of(realtimeError(new Error('No SignalR Hub found...')));
-        }
+            if (!hub) {
+                return of(realtimeError(new Error('No SignalR Hub found...')));
+            }
 
-        // add event listeners
-        const whenEvent$ = hub.on('eventName').pipe(
-            map(x => createAction(x))
-        );
+            // add event listeners
+            const whenEvent$ = hub.on('eventName').pipe(
+                map(x => createAction(x))
+            );
 
-        return merge(
-            whenEvent$,
-            of(startSignalRHub(action.hubName, action.url))
-        );
-    })
+            return merge(
+                whenEvent$,
+                of(startSignalRHub(action.hubName, action.url))
+            );
+        })
+    )
 );
 ```
 
 You can also send events at anytime.
 
 ```ts
-@Effect()
-sendEvent$ = this.actions$.pipe(
-    ofType(SEND_EVENT),
-    mergeMap(action => {
-        const hub = findHub(action);
+sendEvent$ = createEffect(() => 
+    this.actions$.pipe(
+        ofType(SEND_EVENT),
+        mergeMap(action => {
+            const hub = findHub(action);
 
-        if (!hub) {
-            return of(realtimeError(new Error('No SignalR Hub found...')));
-        }
+            if (!hub) {
+                return of(realtimeError(new Error('No SignalR Hub found...')));
+            }
 
-        return hub.send('eventName', params).pipe(
-            map(_ => sendEventFulfilled()),
-            catchError(error => of(sendEventFailed(error)))
-        );
-    })
+            return hub.send('eventName', params).pipe(
+                map(_ => sendEventFulfilled()),
+                catchError(error => of(sendEventFailed(error)))
+            );
+        })
+    )
 );
 ```
 
@@ -94,10 +96,7 @@ sendEvent$ = this.actions$.pipe(
 Now, start with multiple hubs at a time.
 
 ```ts
-const dispatchHubCreation = (hub) => 
-    this.store.dispatch(
-        createSignalRHub(hub.name, hub.url)
-    );
+const dispatchHubCreation = (hub) => this.store.dispatch(createSignalRHub(hub));
 
 const hub1 = {}; // define name and url
 const hub2 = {}; // define name and url
@@ -114,33 +113,36 @@ You will then initialize your hubs in the same way but you need to know which on
 const hub1 = {}; // define name and url
 const hub2 = {}; // define name and url
 
-@Effect()
-initHubOne$ = this.actions$.pipe(
-    ofType<SignalRHubUnstartedAction>(SIGNALR_HUB_UNSTARTED),
-    ofHub(hub1),
-    mergeMap<SignalRHubUnstartedAction, any>(action => {
-        // TODO : init hub 1
-    })
+initHubOne$ = createEffect(() => 
+    this.actions$.pipe(
+        ofType(SIGNALR_HUB_UNSTARTED),
+        ofHub(hub1),
+        mergeMap(action => {
+            // TODO : init hub 1
+        })
+    )
 );
 
-@Effect()
-initHubTwo$ = this.actions$.pipe(
-    ofType<SignalRHubUnstartedAction>(SIGNALR_HUB_UNSTARTED),
-    ofHub(hub2),
-    mergeMap<SignalRHubUnstartedAction, any>(action => {
-        // TODO : init hub 2
-    })
+initHubTwo$ = createEffect(() => 
+    this.actions$.pipe(
+        ofType(SIGNALR_HUB_UNSTARTED),
+        ofHub(hub2),
+        mergeMap(action => {
+            // TODO : init hub 2
+        })
+    )
 );
 ```
 
 And then you can start your app when all hubs are connected the first time.
 
 ```ts
-@Effect()
-appStarted$ = this.store.select(selectAreAllHubsConnected).pipe(
-    filter(areAllHubsConnected => !!areAllHubsConnected),
-    first(),
-    map(_ => of(appStarted()))
+appStarted$ = createEffect(() => 
+    this.store.select(selectAreAllHubsConnected).pipe(
+        filter(areAllHubsConnected => !!areAllHubsConnected),
+        first(),
+        map(_ => of(appStarted()))
+    )
 );
 ```
 
@@ -149,36 +151,37 @@ appStarted$ = this.store.select(selectAreAllHubsConnected).pipe(
 Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. Here is an example on how to apply periodic reconnection:
 
 ```ts
-@Effect()
-whenDisconnected$ = this.actions$.pipe(
-    ofType<SignalRDisconnectedAction>(SIGNALR_DISCONNECTED),
-    switchMap<SignalRDisconnectedAction, any>(action => {
-        const hub = findHub(action);
-        
-        if (!hub) {
-            return of(initRealtimeFailed(new Error('No SignalR Hub found....')));
-        }
-        
-        return this.store.pipe(
-            select(state => state.app.online),
-            switchMap(online => {
-                if (!online) {
-                     return EMPTY;
-                }
-                
-                return interval(10 * 1000).pipe(
-                    map(_ => reconnectSignalRHub(action.hubName, action.url)),
-                    takeUntil(this.actions$.pipe(ofType(SIGNALR_CONNECTED)))
-                );
-            })
-        );
-    })
+whenDisconnected$ = createEffect(() => 
+    this.actions$.pipe(
+        ofType(SIGNALR_DISCONNECTED),
+        switchMap(action => {
+            const hub = findHub(action);
+            
+            if (!hub) {
+                return of(initRealtimeFailed(new Error('No SignalR Hub found....')));
+            }
+            
+            return this.store.pipe(
+                select(state => state.app.online),
+                switchMap(online => {
+                    if (!online) {
+                        return EMPTY;
+                    }
+                    
+                    return interval(10 * 1000).pipe(
+                        map(_ => reconnectSignalRHub(action.hubName, action.url)),
+                        takeUntil(this.actions$.pipe(ofType(SIGNALR_CONNECTED)))
+                    );
+                })
+            );
+        })
+    )
 );
 ```
 
 In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is disconnected and when there is a network connection.
 
-It has the disadvantage that you need to write another `@Effect` but you also have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
+It has the disadvantage that you need to write another `Effect` but you also have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
 
 ## Features
 
@@ -191,9 +194,9 @@ The SignalR Hub is an abstraction of the hub connection. It contains function yo
 * send a new event
 
 ```ts
-class SignalRHub {
+interface ISignalRHub {
     hubName: string;
-    url: string | undefined;
+    url: string;
     options: IHttpConnectionOptions | undefined;
 
     start$: Observable<void>;
@@ -222,7 +225,7 @@ function findHub({ hubName, url }: {
 And create a new hub.
 
 ```ts
-function createHub(hubName: string, url: string, options: IHttpConnectionOptions | undefined): SignalRHub;
+function createHub(hubName: string, url: string, options: IHttpConnectionOptions | undefined): SignalRHub | undefined;
 ```
 
 ### State
@@ -259,80 +262,34 @@ class BaseSignalRStoreState {
 `createSignalRHub` will initialize a new hub connection but it won't start the connection so you can create event listeners.
 
 ```ts
-const createSignalRHub = (hubName: string, url: string, options: IHttpConnectionOptions | undefined) => 
-    ({ type: SIGNALR_CREATE_HUB, hubName, url, options });
+const createSignalRHub = createAction(
+    '@ngrx/signalr/createHub',
+    props<{ hubName: string, url: string, options?: IHttpConnectionOptions | undefined }>()
+);
 ```
 
 `startSignalRHub` will start the hub connection so you can send and receive events.
 
 ```ts
-const startSignalRHub = (hubName: string, url: string) => 
-    ({ type: SIGNALR_START_HUB, hubName, url });
+const startSignalRHub = createAction(
+    '@ngrx/signalr/startHub',
+    props<{ hubName: string, url: string }>()
+);
 ```
 
 `reconnectSignalRHub` will give you a way to reconnect to the hub.
 
-#### All existing actions
-
 ```ts
-// used to create a new hub connection
-type SignalRCreateHubAction = {
-    type: "@ngrx/signalr/createHub";
-    hubName: string;
-    url: string;
-    options: IHttpConnectionOptions | undefined;
-};
-// once the hub is created (default hub state)
-type SignalRHubUnstartedAction = {
-    type: "@ngrx/signalr/hubUnstarted";
-    hubName: string;
-    url: string;
-};
-// used to start the hub connection
-type SignalRStartHubAction = {
-    type: "@ngrx/signalr/startHub";
-    hubName: string;
-    url: string;
-};
-// used to reconnect to the hub connection
-type SignalRReconnectHubAction = {
-    type: "@ngrx/signalr/reconnectHub";
-    hubName: string;
-    url: string;
-};
-// if the hub connection failed to start
-type SignalRHubFailedToStartAction = {
-    type: "@ngrx/signalr/hubFailedToStart";
-    hubName: string;
-    url: string;
-    error: any;
-};
-// connected event received from hub
-type SignalRConnectedAction = {
-    type: "@ngrx/signalr/connected";
-    hubName: string;
-    url: string;
-};
-// disconnected event received from hub
-type SignalRDisconnectedAction = {
-    type: "@ngrx/signalr/disconnected";
-    hubName: string;
-    url: string;
-};
-// error event received from hub
-type SignalRErrorAction = {
-    type: "@ngrx/signalr/error";
-    hubName: string;
-    url: string;
-    error: any;
-};
+const reconnectSignalRHub = createAction(
+    '@ngrx/signalr/reconnectHub',
+    props<{ hubName: string, url: string }>()
+);
 ```
 
 ### Effects
 
 ```ts
 // create hub automatically
-@Effect()
 createHub$: Observable<{
     type: string;
     hubName: string;
@@ -344,7 +301,6 @@ createHub$: Observable<{
 // listen to start result (success/fail)
 // listen to change connection state (connecting, connected, disconnected, reconnecting)
 // listen to hub error
-@Effect()
 beforeStartHub$: Observable<{
     type: string;
     hubName: string;
@@ -364,7 +320,6 @@ beforeStartHub$: Observable<{
 
 ```ts
 // start hub automatically
-@Effect({ dispatch: false })
 startHub$: Observable<SignalRStartHubAction>;
 ```
 
