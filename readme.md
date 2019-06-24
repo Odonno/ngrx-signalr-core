@@ -62,7 +62,7 @@ initRealtime$ = createEffect(() =>
 
             return merge(
                 whenEvent$,
-                of(startSignalRHub(action.hubName, action.url))
+                of(startSignalRHub(hub))
             );
         })
     )
@@ -215,17 +215,17 @@ interface ISignalRHub {
 You can find an existing hub by its name and url.
 
 ```ts
-function findHub(hubName: string, url: string): SignalRHub | undefined;
+function findHub(hubName: string, url: string): ISignalRHub | undefined;
 function findHub({ hubName, url }: {
     hubName: string;
     url: string;
-}): SignalRHub | undefined;
+}): ISignalRHub | undefined;
 ```
 
 And create a new hub.
 
 ```ts
-function createHub(hubName: string, url: string, options: IHttpConnectionOptions | undefined): SignalRHub | undefined;
+function createHub(hubName: string, url: string, options: IHttpConnectionOptions | undefined): ISignalRHub | undefined;
 ```
 
 ### State
