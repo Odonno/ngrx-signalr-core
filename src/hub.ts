@@ -90,7 +90,7 @@ export class SignalRHub implements ISignalRHub {
         }
 
         return from(
-            this._connection.invoke(methodName, args)
+            this._connection.invoke(methodName, ...args)
         );
     }
 

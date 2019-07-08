@@ -59,7 +59,7 @@ export class SignalRHub {
         if (!this._connection) {
             return throwError('The connection has not been started yet. Please start the connection by invoking the start method before attempting to send a message to the server.');
         }
-        return from(this._connection.invoke(methodName, args));
+        return from(this._connection.invoke(methodName, ...args));
     }
     hasSubscriptions() {
         for (let key in this._subjects) {
