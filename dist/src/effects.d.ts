@@ -1,16 +1,5 @@
 import { Actions } from "@ngrx/effects";
-import { MonoTypeOperatorFunction } from "rxjs";
-import { Action } from "@ngrx/store";
 import { SignalRAction } from "./actions";
-interface HubAction extends Action {
-    hubName: string;
-    url: string;
-}
-export declare function ofHub(hubName: string, url: string): MonoTypeOperatorFunction<HubAction>;
-export declare function ofHub({ hubName, url }: {
-    hubName: string;
-    url: string;
-}): MonoTypeOperatorFunction<HubAction>;
 export declare class SignalREffects {
     private actions$;
     createHub$: import("rxjs").Observable<{
@@ -41,4 +30,3 @@ export declare class SignalREffects {
     } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/reconnectHub">)>;
     constructor(actions$: Actions<SignalRAction>);
 }
-export {};

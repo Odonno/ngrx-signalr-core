@@ -169,7 +169,7 @@ whenDisconnected$ = createEffect(() =>
                     }
                     
                     return interval(10 * 1000).pipe(
-                        map(_ => reconnectSignalRHub(action.hubName, action.url)),
+                        map(_ => reconnectSignalRHub(action)),
                         takeUntil(this.actions$.pipe(ofType(SIGNALR_CONNECTED)))
                     );
                 })

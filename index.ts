@@ -10,9 +10,10 @@ export {
     reconnectSignalRHub,
     hubNotFound
 } from './src/actions';
-export { SignalREffects, ofHub } from './src/effects';
+export { SignalREffects } from './src/effects';
 export { ISignalRHub, SignalRHub, SignalRTestingHub, createHub, findHub } from './src/hub';
 export { SignalRStates, SignalRHubState, SignalRHubStatus } from './src/hubStatus';
+export { ofHub, mapToHub } from './src/operators';
 export { BaseSignalRStoreState, signalrReducer } from './src/reducer';
 export {
     selectSignalrState,
