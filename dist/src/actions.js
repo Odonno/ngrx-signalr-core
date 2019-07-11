@@ -5,13 +5,14 @@ export const signalrHubUnstarted = createAction(SIGNALR_HUB_UNSTARTED, props());
 export const startSignalRHub = createAction('@ngrx/signalr/startHub', props());
 export const reconnectSignalRHub = createAction('@ngrx/signalr/reconnectHub', props());
 export const SIGNALR_HUB_FAILED_TO_START = '@ngrx/signalr/hubFailedToStart';
-export const signalrHubFailedToStart = createAction('@ngrx/signalr/hubFailedToStart', props());
+export const signalrHubFailedToStart = createAction(SIGNALR_HUB_FAILED_TO_START, props());
 export const SIGNALR_CONNECTED = '@ngrx/signalr/connected';
-export const signalrConnected = createAction('@ngrx/signalr/connected', props());
+export const signalrConnected = createAction(SIGNALR_CONNECTED, props());
 export const SIGNALR_DISCONNECTED = '@ngrx/signalr/disconnected';
-export const signalrDisconnected = createAction('@ngrx/signalr/disconnected', props());
+export const signalrDisconnected = createAction(SIGNALR_DISCONNECTED, props());
 export const SIGNALR_ERROR = '@ngrx/signalr/error';
-export const signalrError = createAction('@ngrx/signalr/error', props());
+export const signalrError = createAction(SIGNALR_ERROR, props());
+export const hubNotFound = createAction('@ngrx/signalr/hubNotFound', props());
 const signalRAction = union({
     createSignalRHub,
     signalrHubUnstarted,
@@ -20,5 +21,6 @@ const signalRAction = union({
     signalrHubFailedToStart,
     signalrConnected,
     signalrDisconnected,
-    signalrError
+    signalrError,
+    hubNotFound
 });

@@ -52,7 +52,7 @@ initRealtime$ = createEffect(() =>
             const hub = findHub(action);
 
             if (!hub) {
-                return of(realtimeError(new Error('No SignalR Hub found...')));
+                return of(hubNotFound(action));
             }
 
             // add event listeners
@@ -79,7 +79,7 @@ sendEvent$ = createEffect(() =>
             const hub = findHub(action);
 
             if (!hub) {
-                return of(realtimeError(new Error('No SignalR Hub found...')));
+                return of(hubNotFound(action));
             }
 
             return hub.send('eventName', params).pipe(
@@ -158,7 +158,7 @@ whenDisconnected$ = createEffect(() =>
             const hub = findHub(action);
             
             if (!hub) {
-                return of(initRealtimeFailed(new Error('No SignalR Hub found....')));
+                return of(hubNotFound(action));
             }
             
             return this.store.pipe(
@@ -282,6 +282,15 @@ const startSignalRHub = createAction(
 ```ts
 const reconnectSignalRHub = createAction(
     '@ngrx/signalr/reconnectHub',
+    props<{ hubName: string, url: string }>()
+);
+```
+
+`hubNotFound` can be used when you do retrieve your SignalR hub based on its name and url.
+
+```ts
+export const hubNotFound = createAction(
+    '@ngrx/signalr/hubNotFound',
     props<{ hubName: string, url: string }>()
 );
 ```
