@@ -1,5 +1,5 @@
 export { SIGNALR_CONNECTED, SIGNALR_DISCONNECTED, SIGNALR_ERROR, SIGNALR_HUB_FAILED_TO_START, SIGNALR_HUB_UNSTARTED, createSignalRHub, startSignalRHub, reconnectSignalRHub, hubNotFound } from './src/actions';
-export { SignalREffects } from './src/effects';
+export { SignalREffects, createReconnectEffect } from './src/effects';
 export { SignalRHub, SignalRTestingHub, createHub, findHub } from './src/hub';
 export { SignalRStates } from './src/hubStatus';
 export { ofHub, mapToHub } from './src/operators';

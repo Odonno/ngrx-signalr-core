@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Actions, ofType, createEffect } from "@ngrx/effects";
-import { of, merge, EMPTY } from "rxjs";
-import { map, mergeMap, catchError, tap } from 'rxjs/operators';
+import { of, merge, EMPTY, fromEvent, interval } from "rxjs";
+import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 import { findHub, createHub } from "./hub";
-import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart } from "./actions";
+import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, SIGNALR_DISCONNECTED, hubNotFound, SIGNALR_CONNECTED } from "./actions";
 
 @Injectable({
     providedIn: 'root'
@@ -80,3 +80,42 @@ export class SignalREffects {
 
     constructor(private actions$: Actions<SignalRAction>) { }
 }
+
+const offline$ = fromEvent(window, 'offline').pipe(
+    map(() => false)
+);
+const online$ = fromEvent(window, 'online').pipe(
+    map(() => true)
+);
+
+const isOnline = () => merge(offline$, online$).pipe(
+    startWith(navigator.onLine)
+);
+
+export const createReconnectEffect = (actions$: Actions<SignalRAction>, intervalTimespan: number) => {
+    return createEffect(() =>
+        actions$.pipe(
+            ofType(SIGNALR_DISCONNECTED),
+            switchMap(action => {
+                const hub = findHub(action);
+
+                if (!hub) {
+                    return of(hubNotFound(action));
+                }
+
+                return isOnline().pipe(
+                    switchMap(online => {
+                        if (!online) {
+                            return EMPTY;
+                        }
+
+                        return interval(intervalTimespan).pipe(
+                            map(_ => reconnectSignalRHub(action)),
+                            takeUntil(actions$.pipe(ofType(SIGNALR_CONNECTED)))
+                        );
+                    })
+                );
+            })
+        )
+    );
+};

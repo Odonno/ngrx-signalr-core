@@ -155,32 +155,8 @@ appStarted$ = createEffect(() =>
 Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. Here is an example on how to apply periodic reconnection:
 
 ```ts
-whenDisconnected$ = createEffect(() => 
-    this.actions$.pipe(
-        ofType(SIGNALR_DISCONNECTED),
-        switchMap(action => {
-            const hub = findHub(action);
-            
-            if (!hub) {
-                return of(hubNotFound(action));
-            }
-            
-            return this.store.pipe(
-                select(state => state.app.online),
-                switchMap(online => {
-                    if (!online) {
-                        return EMPTY;
-                    }
-                    
-                    return interval(10 * 1000).pipe(
-                        map(_ => reconnectSignalRHub(action)),
-                        takeUntil(this.actions$.pipe(ofType(SIGNALR_CONNECTED)))
-                    );
-                })
-            );
-        })
-    )
-);
+// try to reconnect every 10s (when the navigator is online)
+whenDisconnected$ = createReconnectEffect(this.actions$, 10 * 1000);
 ```
 
 In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is disconnected and when there is a network connection.
