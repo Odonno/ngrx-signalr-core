@@ -32,6 +32,7 @@ export class AppModule { }
 First, you will start the application by dispatching the creation of one Hub.
 
 ```ts
+// TODO : your hub definition
 const hub = {
     name: 'hub name',
     url: 'https://localhost/path'
@@ -55,7 +56,7 @@ initRealtime$ = createEffect(() =>
                 return of(hubNotFound(action));
             }
 
-            // add event listeners
+            // TODO : add event listeners
             const whenEvent$ = hub.on('eventName').pipe(
                 map(x => createAction(x))
             );
@@ -74,7 +75,7 @@ You can also send events at anytime.
 ```ts
 sendEvent$ = createEffect(() => 
     this.actions$.pipe(
-        ofType(SEND_EVENT),
+        ofType(SEND_EVENT), // TODO : create a custom action
         mergeMap(action => {
             const hub = findHub(action);
 
@@ -82,6 +83,7 @@ sendEvent$ = createEffect(() =>
                 return of(hubNotFound(action));
             }
 
+            // TODO : send event to the hub
             return hub.send('eventName', params).pipe(
                 map(_ => sendEventFulfilled()),
                 catchError(error => of(sendEventFailed(error)))
@@ -96,6 +98,7 @@ sendEvent$ = createEffect(() =>
 Now, start with multiple hubs at a time.
 
 ```ts
+// simplified hub creation
 const dispatchHubCreation = (hub) => this.store.dispatch(createSignalRHub(hub));
 
 const hub1 = {}; // define name and url
@@ -142,7 +145,7 @@ appStarted$ = createEffect(() =>
         select(selectAreAllHubsConnected),
         filter(areAllHubsConnected => !!areAllHubsConnected),
         first(),
-        map(_ => of(appStarted()))
+        map(_ => of(appStarted())) // TODO : create a custom action when hubs are connected
     )
 );
 ```
