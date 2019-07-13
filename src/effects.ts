@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Actions, ofType, createEffect } from "@ngrx/effects";
-import { of, merge, EMPTY, fromEvent, interval } from "rxjs";
+import { of, merge, EMPTY, fromEvent, timer } from "rxjs";
 import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 import { findHub, createHub } from "./hub";
 import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, SIGNALR_DISCONNECTED, hubNotFound, SIGNALR_CONNECTED } from "./actions";
+import { ofHub } from "./operators";
 
 @Injectable({
     providedIn: 'root'
@@ -109,9 +110,14 @@ export const createReconnectEffect = (actions$: Actions<SignalRAction>, interval
                             return EMPTY;
                         }
 
-                        return interval(intervalTimespan).pipe(
+                        return timer(0, intervalTimespan).pipe(
                             map(_ => reconnectSignalRHub(action)),
-                            takeUntil(actions$.pipe(ofType(SIGNALR_CONNECTED)))
+                            takeUntil(
+                                actions$.pipe(
+                                    ofType(SIGNALR_CONNECTED),
+                                    ofHub(action)
+                                )
+                            )
                         );
                     })
                 );

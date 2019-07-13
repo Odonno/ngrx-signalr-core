@@ -9,10 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from "@angular/core";
 import { Actions, ofType, createEffect } from "@ngrx/effects";
-import { of, merge, EMPTY, fromEvent, interval } from "rxjs";
+import { of, merge, EMPTY, fromEvent, timer } from "rxjs";
 import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { findHub, createHub } from "./hub";
 import { createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, SIGNALR_DISCONNECTED, hubNotFound, SIGNALR_CONNECTED } from "./actions";
+import { ofHub } from "./operators";
 let SignalREffects = class SignalREffects {
     constructor(actions$) {
         this.actions$ = actions$;
@@ -74,7 +75,7 @@ export const createReconnectEffect = (actions$, intervalTimespan) => {
             if (!online) {
                 return EMPTY;
             }
-            return interval(intervalTimespan).pipe(map(_ => reconnectSignalRHub(action)), takeUntil(actions$.pipe(ofType(SIGNALR_CONNECTED))));
+            return timer(0, intervalTimespan).pipe(map(_ => reconnectSignalRHub(action)), takeUntil(actions$.pipe(ofType(SIGNALR_CONNECTED), ofHub(action))));
         }));
     })));
 };
