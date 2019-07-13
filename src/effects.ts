@@ -97,7 +97,7 @@ export const createReconnectEffect = (actions$: Actions<SignalRAction>, interval
     return createEffect(() =>
         actions$.pipe(
             ofType(signalrDisconnected),
-            switchMap(action => {
+            mergeMap(action => {
                 const hub = findHub(action);
                 if (!hub) {
                     return of(hubNotFound(action));

@@ -66,7 +66,7 @@ const offline$ = fromEvent(window, 'offline').pipe(map(() => false));
 const online$ = fromEvent(window, 'online').pipe(map(() => true));
 const isOnline = () => merge(offline$, online$).pipe(startWith(navigator.onLine));
 export const createReconnectEffect = (actions$, intervalTimespan) => {
-    return createEffect(() => actions$.pipe(ofType(signalrDisconnected), switchMap(action => {
+    return createEffect(() => actions$.pipe(ofType(signalrDisconnected), mergeMap(action => {
         const hub = findHub(action);
         if (!hub) {
             return of(hubNotFound(action));
