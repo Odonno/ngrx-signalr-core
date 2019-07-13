@@ -75,7 +75,7 @@ export const createReconnectEffect = (actions$, intervalTimespan) => {
             if (!online) {
                 return EMPTY;
             }
-            return timer(0, intervalTimespan).pipe(map(_ => reconnectSignalRHub(action)), takeUntil(actions$.pipe(ofType(signalrConnected), ofHub(action))));
-        }));
+            return timer(0, intervalTimespan);
+        }), map(_ => reconnectSignalRHub(action)), takeUntil(actions$.pipe(ofType(signalrConnected), ofHub(action))));
     })));
 };

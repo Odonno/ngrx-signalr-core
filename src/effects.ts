@@ -99,7 +99,6 @@ export const createReconnectEffect = (actions$: Actions<SignalRAction>, interval
             ofType(signalrDisconnected),
             switchMap(action => {
                 const hub = findHub(action);
-
                 if (!hub) {
                     return of(hubNotFound(action));
                 }
@@ -109,17 +108,15 @@ export const createReconnectEffect = (actions$: Actions<SignalRAction>, interval
                         if (!online) {
                             return EMPTY;
                         }
-
-                        return timer(0, intervalTimespan).pipe(
-                            map(_ => reconnectSignalRHub(action)),
-                            takeUntil(
-                                actions$.pipe(
-                                    ofType(signalrConnected),
-                                    ofHub(action)
-                                )
-                            )
-                        );
-                    })
+                        return timer(0, intervalTimespan);
+                    }),
+                    map(_ => reconnectSignalRHub(action)),
+                    takeUntil(
+                        actions$.pipe(
+                            ofType(signalrConnected),
+                            ofHub(action)
+                        )
+                    )
                 );
             })
         )
