@@ -12,7 +12,7 @@ import { Actions, ofType, createEffect } from "@ngrx/effects";
 import { of, merge, EMPTY, fromEvent, timer } from "rxjs";
 import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { findHub, createHub } from "./hub";
-import { createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, SIGNALR_DISCONNECTED, hubNotFound, SIGNALR_CONNECTED } from "./actions";
+import { createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, hubNotFound } from "./actions";
 import { ofHub } from "./operators";
 let SignalREffects = class SignalREffects {
     constructor(actions$) {
@@ -66,7 +66,7 @@ const offline$ = fromEvent(window, 'offline').pipe(map(() => false));
 const online$ = fromEvent(window, 'online').pipe(map(() => true));
 const isOnline = () => merge(offline$, online$).pipe(startWith(navigator.onLine));
 export const createReconnectEffect = (actions$, intervalTimespan) => {
-    return createEffect(() => actions$.pipe(ofType(SIGNALR_DISCONNECTED), switchMap(action => {
+    return createEffect(() => actions$.pipe(ofType(signalrDisconnected), switchMap(action => {
         const hub = findHub(action);
         if (!hub) {
             return of(hubNotFound(action));
@@ -75,7 +75,7 @@ export const createReconnectEffect = (actions$, intervalTimespan) => {
             if (!online) {
                 return EMPTY;
             }
-            return timer(0, intervalTimespan).pipe(map(_ => reconnectSignalRHub(action)), takeUntil(actions$.pipe(ofType(SIGNALR_CONNECTED), ofHub(action))));
+            return timer(0, intervalTimespan).pipe(map(_ => reconnectSignalRHub(action)), takeUntil(actions$.pipe(ofType(signalrConnected), ofHub(action))));
         }));
     })));
 };

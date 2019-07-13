@@ -4,7 +4,7 @@ import { of, merge, EMPTY, fromEvent, timer } from "rxjs";
 import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 import { findHub, createHub } from "./hub";
-import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, SIGNALR_DISCONNECTED, hubNotFound, SIGNALR_CONNECTED } from "./actions";
+import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, hubNotFound } from "./actions";
 import { ofHub } from "./operators";
 
 @Injectable({
@@ -96,7 +96,7 @@ const isOnline = () => merge(offline$, online$).pipe(
 export const createReconnectEffect = (actions$: Actions<SignalRAction>, intervalTimespan: number) => {
     return createEffect(() =>
         actions$.pipe(
-            ofType(SIGNALR_DISCONNECTED),
+            ofType(signalrDisconnected),
             switchMap(action => {
                 const hub = findHub(action);
 
@@ -114,7 +114,7 @@ export const createReconnectEffect = (actions$: Actions<SignalRAction>, interval
                             map(_ => reconnectSignalRHub(action)),
                             takeUntil(
                                 actions$.pipe(
-                                    ofType(SIGNALR_CONNECTED),
+                                    ofType(signalrConnected),
                                     ofHub(action)
                                 )
                             )

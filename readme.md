@@ -159,9 +159,9 @@ Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. He
 whenDisconnected$ = createReconnectEffect(this.actions$, 10 * 1000);
 ```
 
-In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is disconnected and when there is a network connection.
+In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is `disconnected` and when there is a network connection.
 
-It has the disadvantage that you need to write another `Effect` but you also have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
+Of course, you can write your own `Effect` to you have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
 
 ## Features
 
