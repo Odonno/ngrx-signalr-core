@@ -220,12 +220,12 @@ const disconnected = "disconnected";
 type SignalRHubState = 
     | typeof unstarted 
     | typeof connected 
-    | typeof disconnected ;
+    | typeof disconnected;
 
 type SignalRHubStatus = {
     hubName: string;
     url: string;
-    state: SignalRHubState | undefined;
+    state: SignalRHubState;
 };
 ```
 

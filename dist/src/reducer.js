@@ -6,7 +6,7 @@ const initialState = {
 const reducer = createReducer(initialState, on(createSignalRHub, (state, action) => (Object.assign({}, state, { hubStatuses: state.hubStatuses.concat([{
             hubName: action.hubName,
             url: action.url,
-            state: undefined
+            state: 'unstarted'
         }]) }))), on(signalrHubUnstarted, (state, action) => {
     return Object.assign({}, state, { hubStatuses: state.hubStatuses.map(hs => {
             if (hs.hubName === action.hubName && hs.url === action.url) {

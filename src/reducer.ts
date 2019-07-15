@@ -17,7 +17,7 @@ const reducer = createReducer<BaseSignalRStoreState>(
         hubStatuses: state.hubStatuses.concat([{
             hubName: action.hubName,
             url: action.url,
-            state: undefined
+            state: 'unstarted' as SignalRHubState
         }])
     })),
     on(signalrHubUnstarted, (state, action) => {
