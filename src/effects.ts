@@ -6,6 +6,7 @@ import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 
 import { findHub, createHub } from "./hub";
 import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, hubNotFound } from "./actions";
 import { ofHub } from "./operators";
+import { Action } from "@ngrx/store";
 
 @Injectable({
     providedIn: 'root'
@@ -93,7 +94,7 @@ const isOnline = () => merge(offline$, online$).pipe(
     startWith(navigator.onLine)
 );
 
-export const createReconnectEffect = (actions$: Actions<SignalRAction>, intervalTimespan: number) => {
+export const createReconnectEffect = (actions$: Actions<Action>, intervalTimespan: number) => {
     return createEffect(() =>
         actions$.pipe(
             ofType(signalrDisconnected),
