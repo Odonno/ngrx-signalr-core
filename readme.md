@@ -315,19 +315,24 @@ startHub$: Observable<SignalRStartHubAction>;
 ### Selectors
 
 ```ts
-// select all hub statuses in state
+// used to select all hub statuses in state
 const hubStatuses$ = store.pipe(
     select(selectHubsStatuses)
 );
 
-// select a single hub status based on its name and url
+// used to select a single hub status based on its name and url
 const hubStatus$ = store.pipe(
     select(selectHubStatus, { hubName, url })
 );
 
-// know if all hubs are connected
+// used to know if all hubs are connected
 const areAllHubsConnected$ = store.pipe(
     select(selectAreAllHubsConnected)
+);
+
+// used to know when a hub is in a particular state
+const hasHubState$ = store.pipe(
+    select(selectHasHubState, { hubName, url, state })
 );
 ```
 
