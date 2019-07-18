@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, ofType, createEffect } from "@ngrx/effects";
 import { of, merge, EMPTY, fromEvent, timer } from "rxjs";
-import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil, groupBy, exhaustMap } from 'rxjs/operators';
 
 import { findHub, createHub } from "./hub";
 import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, hubNotFound } from "./actions";
@@ -98,26 +98,31 @@ export const createReconnectEffect = (actions$: Actions<Action>, intervalTimespa
     return createEffect(() =>
         actions$.pipe(
             ofType(signalrDisconnected),
-            mergeMap(action => {
-                const hub = findHub(action);
-                if (!hub) {
-                    return of(hubNotFound(action));
-                }
-
-                return isOnline().pipe(
-                    switchMap(online => {
-                        if (!online) {
-                            return EMPTY;
+            groupBy(action => action.hubName),
+            mergeMap(group => {
+                return group.pipe(
+                    exhaustMap(action => {
+                        const hub = findHub(action);
+                        if (!hub) {
+                            return of(hubNotFound(action));
                         }
-                        return timer(0, intervalTimespan);
-                    }),
-                    map(_ => reconnectSignalRHub(action)),
-                    takeUntil(
-                        actions$.pipe(
-                            ofType(signalrConnected),
-                            ofHub(action)
-                        )
-                    )
+
+                        return isOnline().pipe(
+                            switchMap(online => {
+                                if (!online) {
+                                    return EMPTY;
+                                }
+                                return timer(0, intervalTimespan);
+                            }),
+                            map(_ => reconnectSignalRHub(action)),
+                            takeUntil(
+                                actions$.pipe(
+                                    ofType(signalrConnected),
+                                    ofHub(action)
+                                )
+                            )
+                        );
+                    })
                 );
             })
         )
