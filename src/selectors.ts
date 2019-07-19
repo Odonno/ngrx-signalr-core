@@ -3,7 +3,7 @@ import { DEFAULT_SIGNALR_FEATURENAME } from "./constants";
 import { createSelector } from "@ngrx/store";
 import { SignalRHubState } from "./hubStatus";
 
-interface AppState {
+interface RootState {
     signalr: BaseSignalRStoreState;
 }
 
@@ -12,7 +12,7 @@ type HubDefinition = {
     url: string;
 };
 
-export const selectSignalrState = (state: AppState) => state[DEFAULT_SIGNALR_FEATURENAME];
+export const selectSignalrState = (state: RootState) => state[DEFAULT_SIGNALR_FEATURENAME];
 
 export const selectHubsStatuses = createSelector(
     selectSignalrState,
