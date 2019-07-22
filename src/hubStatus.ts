@@ -1,4 +1,5 @@
 import { HubConnectionState } from '@aspnet/signalr';
+import { HubKeyDefinition } from './models';
 
 const unstarted = 'unstarted';
 const connected = 'connected';
@@ -24,8 +25,6 @@ export type SignalRHubState =
     | typeof connected
     | typeof disconnected;
 
-export type SignalRHubStatus = {
-    hubName: string;
-    url: string;
+export type SignalRHubStatus = HubKeyDefinition & {
     state: SignalRHubState;
-}
+};

@@ -49,13 +49,7 @@ Then you will create an effect to start listening to events before starting the 
 initRealtime$ = createEffect(() => 
     this.actions$.pipe(
         ofType(SIGNALR_HUB_UNSTARTED),
-        mergeMap(action => {
-            const hub = findHub(action);
-
-            if (!hub) {
-                return of(hubNotFound(action));
-            }
-
+        mergeMapHubToAction(({ hub }) => {
             // TODO : add event listeners
             const whenEvent$ = hub.on('eventName').pipe(
                 map(x => createAction(x))
@@ -76,13 +70,7 @@ You can also send events at anytime.
 sendEvent$ = createEffect(() => 
     this.actions$.pipe(
         ofType(SEND_EVENT), // TODO : create a custom action
-        mergeMap(action => {
-            const hub = findHub(action);
-
-            if (!hub) {
-                return of(hubNotFound(action));
-            }
-
+        mergeMapHubToAction(({ hub }) => {
             // TODO : send event to the hub
             return hub.send('eventName', params).pipe(
                 map(_ => sendEventFulfilled()),
@@ -120,7 +108,7 @@ initHubOne$ = createEffect(() =>
     this.actions$.pipe(
         ofType(SIGNALR_HUB_UNSTARTED),
         ofHub(hub1),
-        mergeMap(action => {
+        mergeMapHubToAction(({ action, hub }) => {
             // TODO : init hub 1
         })
     )
@@ -130,7 +118,7 @@ initHubTwo$ = createEffect(() =>
     this.actions$.pipe(
         ofType(SIGNALR_HUB_UNSTARTED),
         ofHub(hub2),
-        mergeMap(action => {
+        mergeMapHubToAction(({ action, hub }) => {
             // TODO : init hub 2
         })
     )

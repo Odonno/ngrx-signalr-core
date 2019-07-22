@@ -2,15 +2,11 @@ import { BaseSignalRStoreState } from "./reducer";
 import { DEFAULT_SIGNALR_FEATURENAME } from "./constants";
 import { createSelector } from "@ngrx/store";
 import { SignalRHubState } from "./hubStatus";
+import { HubKeyDefinition } from "./models";
 
 interface RootState {
     signalr: BaseSignalRStoreState;
 }
-
-type HubDefinition = {
-    hubName: string;
-    url: string;
-};
 
 export const selectSignalrState = (state: RootState) => state[DEFAULT_SIGNALR_FEATURENAME];
 
@@ -19,7 +15,7 @@ export const selectHubsStatuses = createSelector(
     state => state.hubStatuses
 );
 
-type SelectHubStatusProps = HubDefinition;
+type SelectHubStatusProps = HubKeyDefinition;
 export const selectHubStatus = createSelector(
     selectSignalrState,
     (state: BaseSignalRStoreState, { hubName, url }: SelectHubStatusProps) =>
@@ -31,7 +27,7 @@ export const selectAreAllHubsConnected = createSelector(
     (hubStatuses) => hubStatuses.every(hs => hs.state === 'connected')
 );
 
-type SelectHasHubStateProps = HubDefinition & { state: SignalRHubState };
+type SelectHasHubStateProps = HubKeyDefinition & { state: SignalRHubState };
 export const selectHasHubState = createSelector(
     selectHubStatus,
     (state, props: SelectHasHubStateProps) => state.state === props.state
