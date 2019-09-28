@@ -1,4 +1,4 @@
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { filter, map, mergeMap, exhaustMap, switchMap } from "rxjs/operators";
 import { findHub } from "./hub";
 import { hubNotFound } from "./actions";
@@ -21,3 +21,8 @@ const hubAndActionOrNotFound = (func) => (action) => {
 export const mergeMapHubToAction = (func) => mergeMap(hubAndActionOrNotFound(func));
 export const switchMapHubToAction = (func) => switchMap(hubAndActionOrNotFound(func));
 export const exhaustMapHubToAction = (func) => exhaustMap(hubAndActionOrNotFound(func));
+export const fromStream = (stream) => {
+    const subject = new Subject();
+    stream.subscribe(subject);
+    return subject.asObservable();
+};

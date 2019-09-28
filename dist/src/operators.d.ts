@@ -2,6 +2,7 @@ import { MonoTypeOperatorFunction, Observable } from "rxjs";
 import { Action } from "@ngrx/store";
 import { ISignalRHub } from "./hub";
 import { HubAction, HubKeyDefinition } from "./models";
+import { IStreamResult } from '@aspnet/signalr';
 export declare function ofHub(hubName: string, url: string): MonoTypeOperatorFunction<HubAction>;
 export declare function ofHub({ hubName, url }: HubKeyDefinition): MonoTypeOperatorFunction<HubAction>;
 export declare const mapToHub: () => import("rxjs").OperatorFunction<{
@@ -25,4 +26,5 @@ export declare const exhaustMapHubToAction: <T extends Action>(func: ObservableM
     hubName: string;
     url: string;
 } & import("@ngrx/store/src/models").TypedAction<"@ngrx/signalr/hubNotFound">) | T>;
+export declare const fromStream: <T>(stream: IStreamResult<T>) => Observable<T>;
 export {};

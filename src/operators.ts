@@ -1,9 +1,10 @@
-import { MonoTypeOperatorFunction, Observable, of } from "rxjs";
+import { MonoTypeOperatorFunction, Observable, of, Subject } from "rxjs";
 import { filter, map, mergeMap, exhaustMap, switchMap } from "rxjs/operators";
 import { Action } from "@ngrx/store";
 import { findHub, ISignalRHub } from "./hub";
 import { hubNotFound } from "./actions";
 import { HubAction, HubKeyDefinition } from "./models";
+import { IStreamResult } from '@aspnet/signalr';
 
 export function ofHub(hubName: string, url: string): MonoTypeOperatorFunction<HubAction>;
 export function ofHub({ hubName, url }: HubKeyDefinition): MonoTypeOperatorFunction<HubAction>;
@@ -46,3 +47,10 @@ export const switchMapHubToAction =
 export const exhaustMapHubToAction =
     <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
         exhaustMap(hubAndActionOrNotFound(func));
+
+export const fromStream =
+    <T>(stream: IStreamResult<T>) => {
+        const subject = new Subject<T>();
+        stream.subscribe(subject);
+        return subject.asObservable();
+    };
