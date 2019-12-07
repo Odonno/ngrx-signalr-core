@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Actions, ofType, createEffect } from "@ngrx/effects";
 import { of, merge, EMPTY, timer } from "rxjs";
-import { map, mergeMap, catchError, tap, switchMap, takeUntil, groupBy } from 'rxjs/operators';
+import { map, mergeMap, catchError, switchMap, takeUntil, groupBy } from 'rxjs/operators';
 
-import { findHub, createHub } from "./hub";
+import { createHub } from "./hub";
 import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, stopSignalRHub } from "./actions";
-import { ofHub, exhaustMapHubToAction, isOnline } from "./operators";
+import { ofHub, exhaustMapHubToAction, isOnline, mergeMapHubToAction } from "./operators";
 import { Action } from "@ngrx/store";
 import { connected, disconnected } from "./hubStatus";
 
@@ -17,13 +17,17 @@ export class SignalREffects {
     createHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(createSignalRHub),
-            mergeMap(action => {
+            map(action => {
                 const hub = createHub(action.hubName, action.url, action.options);
                 if (!hub) {
-                    return EMPTY;
+                    return signalrError({
+                        hubName: action.hubName,
+                        url: action.url, 
+                        error: 'Unable to create SignalR hub...'
+                    });
                 }
 
-                return of(signalrHubUnstarted({ hubName: hub.hubName, url: hub.url }));
+                return signalrHubUnstarted({ hubName: hub.hubName, url: hub.url });
             })
         )
     );
@@ -34,13 +38,7 @@ export class SignalREffects {
     beforeStartHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(signalrHubUnstarted),
-            mergeMap(action => {
-                const hub = findHub(action);
-
-                if (!hub) {
-                    return EMPTY;
-                }
-
+            mergeMapHubToAction(({ hub, action }) => {
                 const start$ = hub.start$.pipe(
                     mergeMap(_ => EMPTY),
                     catchError(error => of(signalrHubFailedToStart({ hubName: action.hubName, url: action.url, error })))
@@ -71,28 +69,26 @@ export class SignalREffects {
     startHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(startSignalRHub, reconnectSignalRHub),
-            tap(action => {
-                const hub = findHub(action);
-                if (hub) {
-                    hub.start();
-                }
+            mergeMapHubToAction(({ hub }) => {
+                return hub.start().pipe(
+                    mergeMap(_ => EMPTY),
+                    catchError(error => of(signalrError({ hubName: hub.hubName, url: hub.url, error })))
+                );
             })
-        ),
-        { dispatch: false }
+        )
     );
 
     // stop hub
     stopHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(stopSignalRHub),
-            tap(action => {
-                const hub = findHub(action);
-                if (hub) {
-                    hub.stop();
-                }
+            mergeMapHubToAction(({ hub }) => {
+                return hub.stop().pipe(
+                    mergeMap(_ => EMPTY),
+                    catchError(error => of(signalrError({ hubName: hub.hubName, url: hub.url, error })))
+                );
             })
-        ),
-        { dispatch: false }
+        )
     );
 
     constructor(private actions$: Actions<SignalRAction>) { }

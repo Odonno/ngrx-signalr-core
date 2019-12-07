@@ -1,6 +1,6 @@
 {
   "name": "ngrx-signalr-core",
-  "version": "8.1.2",
+  "version": "8.1.4",
   "description": "A library to handle realtime SignalR Core events using angular and rxjs",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
