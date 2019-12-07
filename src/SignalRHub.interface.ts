@@ -1,5 +1,5 @@
 import { IHttpConnectionOptions } from "@aspnet/signalr";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 
 export interface ISignalRHub {
     hubName: string;
@@ -14,5 +14,6 @@ export interface ISignalRHub {
     on<T>(eventName: string): Observable<T>;
     stream<T>(methodName: string, ...args: any[]): Observable<T>;
     send<T>(methodName: string, ...args: any[]): Observable<T>;
+    sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
     hasSubscriptions(): boolean;
 }

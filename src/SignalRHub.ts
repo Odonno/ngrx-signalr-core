@@ -80,6 +80,14 @@ export class SignalRHub implements ISignalRHub {
         );
     }
 
+    sendStream<T>(methodName: string, subject: Subject<T>) {
+        const connection = this.ensureConnectionOpened();
+
+        return from(
+            connection.send(methodName, subject)
+        );
+    }
+
     hasSubscriptions(): boolean {
         for (let key in this._subjects) {
             if (this._subjects.hasOwnProperty(key)) {
