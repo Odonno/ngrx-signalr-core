@@ -11,7 +11,10 @@ export {
     hubNotFound
 } from './src/actions';
 export { SignalREffects, createReconnectEffect } from './src/effects';
-export { ISignalRHub, SignalRHub, SignalRTestingHub, createHub, findHub } from './src/hub';
+export { createHub, findHub } from './src/hub';
+export { ISignalRHub } from './src/SignalRHub.interface';
+export { SignalRHub } from './src/SignalRHub';
+export { SignalRTestingHub } from './src/SignalRHub.testing';
 export { SignalRStates, SignalRHubState, SignalRHubStatus } from './src/hubStatus';
 export { HubAction, HubKeyDefinition, HubFullDefinition } from './src/models';
 export {

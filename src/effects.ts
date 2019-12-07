@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Actions, ofType, createEffect } from "@ngrx/effects";
-import { of, merge, EMPTY, fromEvent, timer } from "rxjs";
-import { map, mergeMap, catchError, tap, startWith, switchMap, takeUntil, groupBy } from 'rxjs/operators';
+import { of, merge, EMPTY, timer } from "rxjs";
+import { map, mergeMap, catchError, tap, switchMap, takeUntil, groupBy } from 'rxjs/operators';
 
 import { findHub, createHub } from "./hub";
 import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart } from "./actions";
-import { ofHub, exhaustMapHubToAction } from "./operators";
+import { ofHub, exhaustMapHubToAction, isOnline } from "./operators";
 import { Action } from "@ngrx/store";
 
 @Injectable({
@@ -82,17 +82,6 @@ export class SignalREffects {
 
     constructor(private actions$: Actions<SignalRAction>) { }
 }
-
-const offline$ = fromEvent(window, 'offline').pipe(
-    map(() => false)
-);
-const online$ = fromEvent(window, 'online').pipe(
-    map(() => true)
-);
-
-const isOnline = () => merge(offline$, online$).pipe(
-    startWith(navigator.onLine)
-);
 
 export const createReconnectEffect = (actions$: Actions<Action>, intervalTimespan: number) => {
     return createEffect(() =>

@@ -1,9 +1,23 @@
-import { MonoTypeOperatorFunction, Observable, of } from "rxjs";
-import { filter, map, mergeMap, exhaustMap, switchMap } from "rxjs/operators";
+import { MonoTypeOperatorFunction, Observable, of, fromEvent, merge } from "rxjs";
+import { filter, map, mergeMap, exhaustMap, switchMap, startWith } from "rxjs/operators";
 import { Action } from "@ngrx/store";
-import { findHub, ISignalRHub } from "./hub";
+import { findHub } from "./hub";
 import { hubNotFound } from "./actions";
 import { HubAction, HubKeyDefinition } from "./models";
+import { ISignalRHub } from "./SignalRHub.interface";
+
+export const isOnline = () => {
+    const offline$ = fromEvent(window, 'offline').pipe(
+        map(() => false)
+    );
+    const online$ = fromEvent(window, 'online').pipe(
+        map(() => true)
+    );
+
+    return merge(offline$, online$).pipe(
+        startWith(navigator.onLine)
+    );
+}
 
 export function ofHub(hubName: string, url: string): MonoTypeOperatorFunction<HubAction>;
 export function ofHub({ hubName, url }: HubKeyDefinition): MonoTypeOperatorFunction<HubAction>;

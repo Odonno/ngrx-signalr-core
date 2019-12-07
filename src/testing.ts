@@ -1,5 +1,5 @@
-import { SignalRTestingHub } from "./hub";
 import { IHttpConnectionOptions } from "@aspnet/signalr";
+import { SignalRTestingHub } from "./SignalRHub.testing";
 
 type HubCreationFunc = 
     (hubName: string, url: string, options?: IHttpConnectionOptions | undefined) => SignalRTestingHub | undefined;
