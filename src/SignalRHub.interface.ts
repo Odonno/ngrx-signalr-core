@@ -12,6 +12,7 @@ export interface ISignalRHub {
 
     start(): Observable<void>;
     on<T>(eventName: string): Observable<T>;
+    off(eventName: string): void;
     stream<T>(methodName: string, ...args: any[]): Observable<T>;
     send<T>(methodName: string, ...args: any[]): Observable<T>;
     sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;

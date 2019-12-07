@@ -55,6 +55,14 @@ export class SignalRHub implements ISignalRHub {
         return subject.asObservable();
     }
 
+    off(eventName: string) {
+        if (!this._connection) {
+            return throwError('The connection has not been started yet. Please start the connection by invoking the start method before attempting to stop listening from the server.');
+        }
+
+        this._connection.off(eventName);
+    }
+
     stream<T>(methodName: string, ...args: any[]) {
         return new Observable<T>(
             observer => {
