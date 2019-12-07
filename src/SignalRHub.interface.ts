@@ -7,10 +7,12 @@ export interface ISignalRHub {
     options: IHttpConnectionOptions | undefined;
 
     start$: Observable<void>;
+    stop$: Observable<void>;
     state$: Observable<string>;
     error$: Observable<Error | undefined>;
 
     start(): Observable<void>;
+    stop(): Observable<void>;
     on<T>(eventName: string): Observable<T>;
     off(eventName: string): void;
     stream<T>(methodName: string, ...args: any[]): Observable<T>;

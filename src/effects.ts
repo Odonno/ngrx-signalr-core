@@ -4,9 +4,10 @@ import { of, merge, EMPTY, timer } from "rxjs";
 import { map, mergeMap, catchError, tap, switchMap, takeUntil, groupBy } from 'rxjs/operators';
 
 import { findHub, createHub } from "./hub";
-import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart } from "./actions";
+import { SignalRAction, createSignalRHub, signalrHubUnstarted, startSignalRHub, reconnectSignalRHub, signalrConnected, signalrDisconnected, signalrError, signalrHubFailedToStart, stopSignalRHub } from "./actions";
 import { ofHub, exhaustMapHubToAction, isOnline } from "./operators";
 import { Action } from "@ngrx/store";
+import { connected, disconnected } from "./hubStatus";
 
 @Injectable({
     providedIn: 'root'
@@ -47,10 +48,10 @@ export class SignalREffects {
 
                 const state$ = hub.state$.pipe(
                     mergeMap(state => {
-                        if (state === 'connected') {
+                        if (state === connected) {
                             return of(signalrConnected({ hubName: action.hubName, url: action.url }));
                         }
-                        if (state === 'disconnected') {
+                        if (state === disconnected) {
                             return of(signalrDisconnected({ hubName: action.hubName, url: action.url }));
                         }
                         return EMPTY;
@@ -74,6 +75,20 @@ export class SignalREffects {
                 const hub = findHub(action);
                 if (hub) {
                     hub.start();
+                }
+            })
+        ),
+        { dispatch: false }
+    );
+
+    // stop hub
+    stopHub$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(stopSignalRHub),
+            tap(action => {
+                const hub = findHub(action);
+                if (hub) {
+                    hub.stop();
                 }
             })
         ),

@@ -1,9 +1,9 @@
 import { HubConnectionState } from '@aspnet/signalr';
 import { HubKeyDefinition } from './models';
 
-const unstarted = 'unstarted';
-const connected = 'connected';
-const disconnected = 'disconnected';
+export const unstarted = 'unstarted';
+export const connected = 'connected';
+export const disconnected = 'disconnected';
 
 export const SignalRStates = {
     unstarted,

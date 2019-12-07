@@ -1,19 +1,23 @@
 import { ISignalRHub } from "./SignalRHub.interface";
 import { Subject, Observable, timer } from "rxjs";
 import { IHttpConnectionOptions } from "@aspnet/signalr";
+import { connected, disconnected } from "./hubStatus";
 
 export abstract class SignalRTestingHub implements ISignalRHub {
     private _startSubject = new Subject<void>();
+    private _stopSubject = new Subject<void>();
     private _stateSubject = new Subject<string>();
     private _errorSubject = new Subject<Error | undefined>();
     private _subjects: { [eventName: string]: Subject<any> } = {};
 
     start$: Observable<void>;
+    stop$: Observable<void>;
     state$: Observable<string>;
     error$: Observable<Error | undefined>;
 
     constructor(public hubName: string, public url: string, public options: IHttpConnectionOptions | undefined) {
         this.start$ = this._startSubject.asObservable();
+        this.stop$ = this._stopSubject.asObservable();
         this.state$ = this._stateSubject.asObservable();
         this.error$ = this._errorSubject.asObservable();
     }
@@ -21,10 +25,19 @@ export abstract class SignalRTestingHub implements ISignalRHub {
     start() {
         timer(100).subscribe(_ => {
             this._startSubject.next();
-            this._stateSubject.next('connected');
+            this._stateSubject.next(connected);
         });
 
         return this._startSubject.asObservable();
+    }
+
+    stop() {
+        timer(100).subscribe(_ => {
+            this._stopSubject.next();
+            this._stateSubject.next(disconnected);
+        });
+
+        return this._stopSubject.asObservable();
     }
 
     abstract on<T>(eventName: string): Observable<T>;

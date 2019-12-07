@@ -17,6 +17,11 @@ export const startSignalRHub = createAction(
     props<{ hubName: string, url: string }>()
 );
 
+export const stopSignalRHub = createAction(
+    '@ngrx/signalr/stopHub',
+    props<{ hubName: string, url: string }>()
+);
+
 export const reconnectSignalRHub = createAction(
     '@ngrx/signalr/reconnectHub',
     props<{ hubName: string, url: string }>()
@@ -55,6 +60,7 @@ const signalRAction = union({
     createSignalRHub,
     signalrHubUnstarted,
     startSignalRHub,
+    stopSignalRHub,
     reconnectSignalRHub,
     signalrHubFailedToStart,
     signalrConnected,

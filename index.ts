@@ -7,6 +7,7 @@ export {
     SignalRAction,
     createSignalRHub,
     startSignalRHub,
+    stopSignalRHub,
     reconnectSignalRHub,
     hubNotFound
 } from './src/actions';

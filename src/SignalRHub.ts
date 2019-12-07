@@ -3,20 +3,24 @@ import { HubConnection, IHttpConnectionOptions } from "@aspnet/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
 import { share } from "rxjs/operators";
 import { createConnection, getOrCreateSubject } from "./hub";
+import { connected, disconnected } from "./hubStatus";
 
 export class SignalRHub implements ISignalRHub {
     private _connection: HubConnection | undefined;
     private _startSubject = new Subject<void>();
+    private _stopSubject = new Subject<void>();
     private _stateSubject = new Subject<string>();
     private _errorSubject = new Subject<Error | undefined>();
     private _subjects: { [eventName: string]: Subject<any> } = {};
 
     start$: Observable<void>;
+    stop$: Observable<void>;
     state$: Observable<string>;
     error$: Observable<Error | undefined>;
 
     constructor(public hubName: string, public url: string, public options: IHttpConnectionOptions | undefined) {
         this.start$ = this._startSubject.asObservable();
+        this.stop$ = this._stopSubject.asObservable();
         this.state$ = this._stateSubject.asObservable();
         this.error$ = this._errorSubject.asObservable();
     }
@@ -26,7 +30,7 @@ export class SignalRHub implements ISignalRHub {
             this._connection = createConnection(this.url, this.options);
             this._connection.onclose(error => {
                 this._errorSubject.next(error);
-                this._stateSubject.next('disconnected');
+                this._stateSubject.next(disconnected);
             });
         }
 
@@ -39,11 +43,26 @@ export class SignalRHub implements ISignalRHub {
         connection.start()
             .then(_ => {
                 this._startSubject.next();
-                this._stateSubject.next('connected');
+                this._stateSubject.next(connected);
             })
             .catch(error => this._startSubject.error(error));
 
         return this._startSubject.asObservable();
+    }
+
+    stop() {
+        if (!this._connection) {
+            return throwError('The connection has not been started yet. Please start the connection by invoking the start method before attempting to stop listening from the server.');
+        }
+
+        this._connection.stop()
+            .then(_ => {
+                this._stopSubject.next();
+                this._stateSubject.next(disconnected);
+            })
+            .catch(error => this._stopSubject.error(error));
+
+        return this._stopSubject.asObservable();
     }
 
     on<T>(eventName: string) {
