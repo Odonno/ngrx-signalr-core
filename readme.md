@@ -9,7 +9,7 @@ A library to handle realtime SignalR (.NET Core) events using angular, rxjs and 
 ### Install dependencies
 
 ```
-npm install rxjs @ngrx/store @ngrx/effects @aspnet/signalr --save
+npm install rxjs @ngrx/store @ngrx/effects @microsoft/signalr --save
 npm install ngrx-signalr-core --save
 ```
 
@@ -27,7 +27,9 @@ Once everything is installed, you can use the reducer and the effects inside the
 export class AppModule { }
 ```
 
-### Start with a single Hub
+<details>
+<summary>Start with a single Hub...</summary>
+<br>
 
 First, you will start the application by dispatching the creation of one Hub.
 
@@ -86,7 +88,11 @@ sendEvent$ = createEffect(() =>
 );
 ```
 
-### Using multiple Hubs
+</details>
+
+<details>
+<summary>...or use multiple Hubs</summary>
+<br>
 
 Now, start with multiple hubs at a time.
 
@@ -143,7 +149,11 @@ appStarted$ = createEffect(() =>
 );
 ```
 
-### Handling reconnection
+</details>
+
+<details>
+<summary>Handling reconnection</summary>
+<br>
 
 Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. Here is an example on how to apply periodic reconnection:
 
@@ -156,9 +166,13 @@ In this example, we apply a periodic reconnection attempt every 10 seconds when 
 
 Of course, you can write your own `Effect` to you have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
 
-## Features
+</details>
 
-### SignalR Hub
+## API features
+
+<details>
+<summary>SignalR Hub</summary>
+<br>
 
 The SignalR Hub is an abstraction of the hub connection. It contains function you can use to:
 
@@ -173,14 +187,19 @@ interface ISignalRHub {
     options: IHttpConnectionOptions | undefined;
 
     start$: Observable<void>;
+    stop$: Observable<void>;
     state$: Observable<string>;
     error$: Observable<Error | undefined>;
 
     constructor(hubName: string, url: string, options: IHttpConnectionOptions | undefined);
 
     start(): Observable<void>;
+    stop(): Observable<void>;
     on<T>(eventName: string): Observable<T>;
-    send(methodName: string, ...args: any[]): Observable<any>;
+    off(eventName: string): void;
+    stream<T>(methodName: string, ...args: any[]): Observable<T>;
+    send<T>(methodName: string, ...args: any[]): Observable<T>;
+    sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
     hasSubscriptions(): boolean;
 }
 ```
@@ -201,7 +220,11 @@ And create a new hub.
 function createHub(hubName: string, url: string, options: IHttpConnectionOptions | undefined): ISignalRHub | undefined;
 ```
 
-### State
+</details>
+
+<details>
+<summary>State</summary>
+<br>
 
 The state contains all existing hubs that was created with their according status (unstarted, connected, disconnected).
 
@@ -228,7 +251,11 @@ class BaseSignalRStoreState {
 }
 ```
 
-### Actions
+</details>
+
+<details>
+<summary>Actions</summary>
+<br>
 
 #### Actions to dispatch
 
@@ -246,6 +273,15 @@ const createSignalRHub = createAction(
 ```ts
 const startSignalRHub = createAction(
     '@ngrx/signalr/startHub',
+    props<{ hubName: string, url: string }>()
+);
+```
+
+`stopSignalRHub` will stop the current hub connection.
+
+```ts
+const stopSignalRHub = createAction(
+    '@ngrx/signalr/stopHub',
     props<{ hubName: string, url: string }>()
 );
 ```
@@ -268,44 +304,39 @@ export const hubNotFound = createAction(
 );
 ```
 
-### Effects
+</details>
+
+<details>
+<summary>Effects</summary>
+<br>
 
 ```ts
 // create hub automatically
-createHub$: Observable<{
-    type: string;
-    hubName: string;
-    url: string;
-}>;
+createHub$;
 ```
 
 ```ts
 // listen to start result (success/fail)
 // listen to change connection state (connecting, connected, disconnected, reconnecting)
 // listen to hub error
-beforeStartHub$: Observable<{
-    type: string;
-    hubName: string;
-    url: string;
-    error: any;
-} | {
-    type: string;
-    hubName: string;
-    url: string;
-} | {
-    type: string;
-    hubName: string;
-    url: string;
-    error: Error | undefined;
-}>;
+beforeStartHub$;
 ```
 
 ```ts
 // start hub automatically
-startHub$: Observable<SignalRStartHubAction>;
+startHub$;
 ```
 
-### Selectors
+```ts
+// stop hub
+stopHub$;
+```
+
+</details>
+
+<details>
+<summary>Selectors</summary>
+<br>
 
 ```ts
 // used to select all hub statuses in state
@@ -329,11 +360,4 @@ const hasHubState$ = store.pipe(
 );
 ```
 
-## Publish a new version
-
-First compile using `tsc` and then publish to npm registry.
-
-```
-tsc
-npm publish --access public
-```
+</details>
