@@ -12,8 +12,13 @@ import { connected, disconnected } from "./hubStatus";
 @Injectable({
     providedIn: 'root'
 })
+/**
+ * Collection of effects to execute realtime events (hub creation, starting, stopping, etc..).
+ */
 export class SignalREffects {
-    // handle hub creation (then hub unstarted by default)
+    /**
+     * Automatically create a new SignalR hub (then set hub state to `unstarted` by default).
+     */
     createHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(createSignalRHub),
@@ -32,9 +37,12 @@ export class SignalREffects {
         )
     );
 
-    // listen to start result (success/fail)
-    // listen to change connection state (connected, disconnected)
-    // listen to hub error
+    /**
+     * Listen to every change on the SignalR hub.
+     * Listen to start result (success/fail).
+     * Listen to change connection state (connected, disconnected).
+     * Listen to hub error.
+     */
     beforeStartHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(signalrHubUnstarted),
@@ -65,7 +73,9 @@ export class SignalREffects {
         )
     );
 
-    // start hub
+    /**
+     * Automatically start hub based on actions dispatched.
+     */
     startHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(startSignalRHub, reconnectSignalRHub),
@@ -78,7 +88,9 @@ export class SignalREffects {
         )
     );
 
-    // stop hub
+    /**
+     * Automatically stop hub based on actions dispatched.
+     */
     stopHub$ = createEffect(() =>
         this.actions$.pipe(
             ofType(stopSignalRHub),
@@ -94,6 +106,11 @@ export class SignalREffects {
     constructor(private actions$: Actions<SignalRAction>) { }
 }
 
+/**
+ * Create an @ngrx effect to handle SignalR reconnection automatically.
+ * @param actions$ Observable of all actions dispatched in the current app.
+ * @param intervalTimespan Timespan between each reconnection attempt (in milliseconds).
+ */
 export const createReconnectEffect = (actions$: Actions<Action>, intervalTimespan: number) => {
     return createEffect(() =>
         actions$.pipe(

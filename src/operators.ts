@@ -6,6 +6,9 @@ import { hubNotFound } from "./actions";
 import { HubAction, HubKeyDefinition } from "./models";
 import { ISignalRHub } from "./SignalRHub.interface";
 
+/**
+ * Returns an Observable with the current status of network connection, whether online or offline.
+ */
 export const isOnline = () => {
     const offline$ = fromEvent(window, 'offline').pipe(
         map(() => false)
@@ -19,7 +22,16 @@ export const isOnline = () => {
     );
 }
 
+/**
+ * Filter a hub action based on the identifier of a SignalR hub (name, url).
+ * @param hubName Name of the hub.
+ * @param url Url of the hub.
+ */
 export function ofHub(hubName: string, url: string): MonoTypeOperatorFunction<HubAction>;
+/**
+ * Filter a hub action based on the identifier of a SignalR hub (name, url).
+ * @param param0 Object that contains information to indentify a hub (name, url).
+ */
 export function ofHub({ hubName, url }: HubKeyDefinition): MonoTypeOperatorFunction<HubAction>;
 export function ofHub(x: string | HubKeyDefinition, url?: string | undefined): MonoTypeOperatorFunction<HubAction> {
     if (typeof x === 'string') {
@@ -29,6 +41,9 @@ export function ofHub(x: string | HubKeyDefinition, url?: string | undefined): M
     }
 }
 
+/**
+ * Map the hub definition (hub name, url) to an existing SignalR hub instance.
+ */
 export const mapToHub = () => map(findHub);
 
 type ObservableMapHubToActionInput = {
@@ -49,14 +64,32 @@ const hubAndActionOrNotFound =
             return func({ action, hub });
         };
 
+/**
+ * Map a hub action to a new object that contains 
+ * both the original action and the SignalR hub instance, 
+ * using `mergeMap` rxjs operator.
+ * @param func A function that returns an Observable according to the given action and SignalR hub instance.
+ */
 export const mergeMapHubToAction =
     <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
         mergeMap(hubAndActionOrNotFound(func));
 
+/**
+ * Map a hub action to a new object that contains 
+ * both the original action and the SignalR hub instance, 
+ * using `switchMap` rxjs operator.
+ * @param func A function that returns an Observable according to the given action and SignalR hub instance.
+ */
 export const switchMapHubToAction =
     <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
         switchMap(hubAndActionOrNotFound(func));
 
+/**
+ * Map a hub action to a new object that contains 
+ * both the original action and the SignalR hub instance, 
+ * using `exhaustMap` rxjs operator.
+ * @param func A function that returns an Observable according to the given action and SignalR hub instance.
+ */
 export const exhaustMapHubToAction =
     <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
         exhaustMap(hubAndActionOrNotFound(func));

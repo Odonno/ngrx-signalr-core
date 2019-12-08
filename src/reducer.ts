@@ -6,7 +6,13 @@ const initialState = {
     hubStatuses: []
 };
 
+/**
+ * Base class that store the entire state of SignalR in the app Store.
+ */
 export interface BaseSignalRStoreState {
+    /**
+     * Status of all hubs created in the app.
+     */
     hubStatuses: SignalRHubStatus[];
 }
 
@@ -64,6 +70,11 @@ const reducer = createReducer<BaseSignalRStoreState>(
     })
 );
 
+/**
+ * A reducer to use on the SignalR store state.
+ * @param state A state that contains SignalR hub information.
+ * @param action An action to dispatch.
+ */
 export function signalrReducer(state: BaseSignalRStoreState | undefined, action: Action) {
     return reducer(state, action);
 };
