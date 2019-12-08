@@ -46,19 +46,21 @@ export function ofHub(x: string | HubKeyDefinition, url?: string | undefined): M
  */
 export const mapToHub = () => map(findHub);
 
-type ObservableMapHubToActionInput = {
-    action: HubAction;
+type ObservableMapHubToActionInput<T extends Action> = {
+    action: T;
     hub: ISignalRHub;
 };
-type ObservableMapHubToActionFunc<T extends Action> =
-    (input: ObservableMapHubToActionInput) => Observable<T>;
+type ObservableMapHubToActionFunc<T extends Action, U> =
+    (input: ObservableMapHubToActionInput<T>) => Observable<U>;
 
 const hubAndActionOrNotFound =
-    <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
-        (action: HubAction) => {
-            const hub = findHub(action);
+    <T extends Action, U>(func: ObservableMapHubToActionFunc<T, U>) =>
+        (action: T) => {
+            const search = <HubAction><unknown>action;
+
+            const hub = findHub(search);
             if (!hub) {
-                return of(hubNotFound(action));
+                return of(hubNotFound(search));
             }
 
             return func({ action, hub });
@@ -71,7 +73,7 @@ const hubAndActionOrNotFound =
  * @param func A function that returns an Observable according to the given action and SignalR hub instance.
  */
 export const mergeMapHubToAction =
-    <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
+    <T extends Action, U>(func: ObservableMapHubToActionFunc<T, U>) =>
         mergeMap(hubAndActionOrNotFound(func));
 
 /**
@@ -81,7 +83,7 @@ export const mergeMapHubToAction =
  * @param func A function that returns an Observable according to the given action and SignalR hub instance.
  */
 export const switchMapHubToAction =
-    <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
+    <T extends Action, U>(func: ObservableMapHubToActionFunc<T, U>) =>
         switchMap(hubAndActionOrNotFound(func));
 
 /**
@@ -91,5 +93,5 @@ export const switchMapHubToAction =
  * @param func A function that returns an Observable according to the given action and SignalR hub instance.
  */
 export const exhaustMapHubToAction =
-    <T extends Action>(func: ObservableMapHubToActionFunc<T>) =>
+    <T extends Action, U>(func: ObservableMapHubToActionFunc<T, U>) =>
         exhaustMap(hubAndActionOrNotFound(func));
