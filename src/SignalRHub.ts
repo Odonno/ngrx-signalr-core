@@ -87,7 +87,7 @@ export class SignalRHub implements ISignalRHub {
             observer => {
                 const connection = this.ensureConnectionOpened();
 
-                const stream = connection.stream(methodName, args);
+                const stream = connection.stream(methodName, ...args);
                 const subscription = stream.subscribe(observer);
 
                 return () => subscription.dispose();
