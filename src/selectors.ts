@@ -46,5 +46,5 @@ type SelectHasHubStateProps = HubKeyDefinition & { state: SignalRHubState };
  */
 export const selectHasHubState = createSelector(
     selectHubStatus,
-    (state, props: SelectHasHubStateProps) => state.state === props.state
+    (state, props: SelectHasHubStateProps) => !!state && (state.state === props.state)
 );
