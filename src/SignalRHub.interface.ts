@@ -1,4 +1,4 @@
-import { IHttpConnectionOptions } from "@aspnet/signalr";
+import { IHttpConnectionOptions } from "@microsoft/signalr";
 import { Observable, Subject } from "rxjs";
 
 /**
@@ -68,9 +68,9 @@ export interface ISignalRHub {
     /**
      * Send realtime stream events from the client to the server.
      * @param methodName Name of the stream.
-     * @param subject Subject used to send data to the server.
+     * @param observable Observable used to send data to the server.
      */
-    sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
+    sendStream<T>(methodName: string, observable: Observable<T>): void;
     /**
      * Indicates if there is at least one subscription living between the client and the server.
      */

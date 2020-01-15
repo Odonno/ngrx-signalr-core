@@ -1,5 +1,5 @@
 import { Action } from "@ngrx/store";
-import { IHttpConnectionOptions } from "@aspnet/signalr";
+import { IHttpConnectionOptions } from "@microsoft/signalr";
 
 /**
  * Information definition that identify a SignalR hub (name, url).

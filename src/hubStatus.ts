@@ -1,4 +1,4 @@
-import { HubConnectionState } from '@aspnet/signalr';
+import { HubConnectionState } from '@microsoft/signalr';
 import { HubKeyDefinition } from './models';
 
 export const unstarted = 'unstarted';
@@ -18,7 +18,7 @@ export const SignalRStates = {
  * Convert a hub connection state to the internal state value.
  * @param state The state of the hub connection.
  */
-export const toSignalRState = (state: HubConnectionState): string => {
+export const toSignalRState = (state: HubConnectionState) => {
     switch (state) {
         case HubConnectionState.Connected:
             return connected;

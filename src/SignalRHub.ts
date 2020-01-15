@@ -1,5 +1,5 @@
 import { ISignalRHub } from "./SignalRHub.interface";
-import { HubConnection, IHttpConnectionOptions } from "@aspnet/signalr";
+import { HubConnection, IHttpConnectionOptions, Subject as SignalRSubject } from "@microsoft/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
 import { share } from "rxjs/operators";
 import { createConnection, getOrCreateSubject } from "./hub";
@@ -107,12 +107,13 @@ export class SignalRHub implements ISignalRHub {
         );
     }
 
-    sendStream<T>(methodName: string, subject: Subject<T>) {
+    sendStream<T>(methodName: string, observable: Observable<T>) {
         const connection = this.ensureConnectionOpened();
 
-        return from(
-            connection.send(methodName, subject)
-        );
+        const internalSubject = new SignalRSubject<T>();
+        observable.subscribe(internalSubject);
+
+        connection.send(methodName, internalSubject);
     }
 
     hasSubscriptions(): boolean {

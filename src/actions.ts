@@ -1,4 +1,4 @@
-import { IHttpConnectionOptions } from '@aspnet/signalr';
+import { IHttpConnectionOptions } from '@microsoft/signalr';
 import { createAction, props, union } from '@ngrx/store';
 
 /**

@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { IHttpConnectionOptions, HubConnectionBuilder } from '@aspnet/signalr';
+import { IHttpConnectionOptions, HubConnectionBuilder } from '@microsoft/signalr';
 import { testingEnabled, hubCreationFunc } from './testing';
 import { ISignalRHub } from './SignalRHub.interface';
 import { SignalRHub } from './SignalRHub';

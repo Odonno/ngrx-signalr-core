@@ -1,6 +1,6 @@
 import { ISignalRHub } from "./SignalRHub.interface";
 import { Subject, Observable, timer } from "rxjs";
-import { IHttpConnectionOptions } from "@aspnet/signalr";
+import { IHttpConnectionOptions } from "@microsoft/signalr";
 import { connected, disconnected } from "./hubStatus";
 
 export abstract class SignalRTestingHub implements ISignalRHub {
@@ -44,7 +44,7 @@ export abstract class SignalRTestingHub implements ISignalRHub {
     abstract off(eventName: string): void;
     abstract stream<T>(methodName: string, ...args: any[]): Observable<T>;
     abstract send<T>(methodName: string, ...args: any[]): Observable<T>;
-    abstract sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
+    abstract sendStream<T>(methodName: string, observable: Observable<T>): void;
 
     hasSubscriptions(): boolean {
         for (let key in this._subjects) {

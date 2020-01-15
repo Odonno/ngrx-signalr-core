@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IHttpConnectionOptions } from "@aspnet/signalr";
+import { IHttpConnectionOptions } from "@microsoft/signalr";
 import { createHub, findHub } from "./hub";
 import { HubKeyDefinition } from "./models";
 
