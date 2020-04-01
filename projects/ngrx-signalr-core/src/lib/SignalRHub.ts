@@ -2,8 +2,8 @@ import { ISignalRHub } from "./SignalRHub.interface";
 import { HubConnection, IHttpConnectionOptions, Subject as SignalRSubject } from "@microsoft/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
 import { share } from "rxjs/operators";
-import { createConnection, getOrCreateSubject } from "./hub";
 import { connected, disconnected } from "./hubStatus";
+import { createConnection, getOrCreateSubject } from './signalr';
 
 export class SignalRHub implements ISignalRHub {
     private _connection: HubConnection | undefined;

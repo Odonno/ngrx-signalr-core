@@ -1,5 +1,5 @@
 import { IHttpConnectionOptions } from "@microsoft/signalr";
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 
 /**
  * SignalR Hub instance that is built on top of @aspnet/signalr.

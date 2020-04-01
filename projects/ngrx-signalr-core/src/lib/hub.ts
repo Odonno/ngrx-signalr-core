@@ -1,5 +1,4 @@
-import { Subject } from 'rxjs';
-import { IHttpConnectionOptions, HubConnectionBuilder } from '@microsoft/signalr';
+import { IHttpConnectionOptions } from '@microsoft/signalr';
 import { testingEnabled, hubCreationFunc } from './testing';
 import { ISignalRHub } from './SignalRHub.interface';
 import { SignalRHub } from './SignalRHub';
@@ -43,20 +42,4 @@ export const createHub = (hubName: string, url: string, options?: IHttpConnectio
     const hub = new SignalRHub(hubName, url, options);
     hubs.push(hub);
     return hub;
-};
-
-export const getOrCreateSubject = <T>(subjects: { [name: string]: Subject<any> }, event: string): Subject<T> => {
-    return subjects[event] || (subjects[event] = new Subject<T>());
-};
-
-export const createConnection = (url: string, options?: IHttpConnectionOptions | undefined) => {
-    if (!options) {
-        return new HubConnectionBuilder()
-            .withUrl(url)
-            .build();
-    }
-
-    return new HubConnectionBuilder()
-        .withUrl(url, options)
-        .build();
 };
