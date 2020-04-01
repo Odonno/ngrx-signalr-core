@@ -9,7 +9,7 @@ A library to handle realtime SignalR (.NET Core) events using angular, rxjs and 
 ### Install dependencies
 
 ```
-npm install rxjs @ngrx/store @ngrx/effects @aspnet/signalr --save
+npm install rxjs @ngrx/store @ngrx/effects @microsoft/signalr --save
 npm install ngrx-signalr-core --save
 ```
 
