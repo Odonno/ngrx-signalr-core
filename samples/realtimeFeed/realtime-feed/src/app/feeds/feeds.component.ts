@@ -3,7 +3,8 @@ import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { Feed } from '../models';
 import { RootState } from '../state';
-import { selectFeeds } from '../feeds.selectors';
+import { selectFeeds, selectCanLoadMore } from '../feeds.selectors';
+import { loadMoreFeeds } from '../feeds.actions';
 
 @Component({
   selector: 'app-feeds',
@@ -12,13 +13,26 @@ import { selectFeeds } from '../feeds.selectors';
 })
 export class FeedsComponent implements OnInit {
   feeds$: Observable<Feed[]>;
+  canLoadMore$: Observable<boolean>;
 
-  constructor(store: Store<RootState>) {
+  constructor(private readonly store: Store<RootState>) {
     this.feeds$ = store.pipe(
       select(selectFeeds)
+    );
+
+    this.canLoadMore$ = store.pipe(
+      select(selectCanLoadMore)
     );
   }
 
   ngOnInit(): void {
+  }
+
+  trackById = (feed: Feed) => feed.id;
+
+  onLoadMoreButtonClicked = () => {
+    this.store.dispatch(
+      loadMoreFeeds()
+    );
   }
 }

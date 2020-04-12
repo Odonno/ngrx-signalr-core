@@ -1,5 +1,5 @@
 import { createReducer, Action, on } from '@ngrx/store';
-import { feedsLoaded, feedCreated } from './actions';
+import { feedsLoaded, feedCreated } from './feeds.actions';
 import { FeedEntityState, feedsInitialState, feedsAdapter } from './feeds.entities';
 
 export type RootState = {
@@ -16,9 +16,9 @@ export const initialState: AppState = {
 
 const appReducer = createReducer(
     initialState,
-    on(feedsLoaded, (state: AppState, { feeds }) => ({
+    on(feedsLoaded, (state: AppState, { feeds, canLoadMore }) => ({
         ...state,
-        feeds: feedsAdapter.addAll(feeds, state.feeds)
+        feeds: feedsAdapter.addMany(feeds, { ...state.feeds, canLoadMore })
     })),
     on(feedCreated, (state: AppState, { feed }) => ({
         ...state,
