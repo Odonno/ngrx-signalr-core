@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { Feed } from '../models';
 import { RootState } from '../state';
-import { selectFeeds } from '../selectors';
+import { selectFeeds } from '../feeds.selectors';
 
 @Component({
   selector: 'app-feeds',

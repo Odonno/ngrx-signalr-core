@@ -6,7 +6,7 @@ using RealtimeFeed.Api.Services;
 namespace RealtimeFeed.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class FeedController : ControllerBase
     {
         private readonly RealtimeFeedService _realtimeFeedService;

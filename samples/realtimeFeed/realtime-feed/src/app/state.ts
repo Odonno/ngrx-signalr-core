@@ -1,28 +1,28 @@
-import { Feed } from './models'
 import { createReducer, Action, on } from '@ngrx/store';
 import { feedsLoaded, feedCreated } from './actions';
+import { FeedEntityState, feedsInitialState, feedsAdapter } from './feeds.entities';
 
 export type RootState = {
     app: AppState;
 };
 
 export type AppState = {
-    feeds: Feed[] // TODO : use @ngrx/entity
+    feeds: FeedEntityState
 };
 
 export const initialState: AppState = {
-    feeds: []
+    feeds: feedsInitialState
 };
 
 const appReducer = createReducer(
     initialState,
     on(feedsLoaded, (state: AppState, { feeds }) => ({
         ...state,
-        feeds // TODO : use @ngrx/entity
+        feeds: feedsAdapter.addAll(feeds, state.feeds)
     })),
     on(feedCreated, (state: AppState, { feed }) => ({
         ...state,
-        feeds: state.feeds.concat(feed) // TODO : use @ngrx/entity
+        feeds: feedsAdapter.addOne(feed, state.feeds)
     }))
 );
 
