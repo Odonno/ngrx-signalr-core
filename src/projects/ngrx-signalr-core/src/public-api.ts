@@ -3,16 +3,21 @@
  */
 
 export {
+    SIGNALR_HUB_UNSTARTED,
+    SIGNALR_HUB_FAILED_TO_START,
     SIGNALR_CONNECTED,
     SIGNALR_DISCONNECTED,
     SIGNALR_ERROR,
-    SIGNALR_HUB_FAILED_TO_START,
-    SIGNALR_HUB_UNSTARTED,
     SignalRAction,
     createSignalRHub,
+    signalrHubUnstarted,
     startSignalRHub,
     stopSignalRHub,
     reconnectSignalRHub,
+    signalrHubFailedToStart,
+    signalrConnected,
+    signalrDisconnected,
+    signalrError,
     hubNotFound
 } from './lib/actions';
 export { SignalREffects, createReconnectEffect } from './lib/effects';
