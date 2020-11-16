@@ -2,7 +2,7 @@
 
 A library to handle realtime SignalR (.NET Core) events using angular, rxjs and the @ngrx library.
 
-*This library is made for the SignalR client using .NET Core. If you need to target .NET Framework, please check this repository : https://github.com/Odonno/ngrx-signalr*
+_This library is made for the SignalR client using .NET Core. If you need to target .NET Framework, please check this repository : https://github.com/Odonno/ngrx-signalr_
 
 ## Get started
 
@@ -36,55 +36,48 @@ First, you will start the application by dispatching the creation of one Hub.
 ```ts
 // TODO : your hub definition
 const hub = {
-    hubName: 'hub name',
-    url: 'https://localhost/path'
+  hubName: "hub name",
+  url: "https://localhost/path",
 };
 
-this.store.dispatch(
-    createSignalRHub(hub)
-);
+this.store.dispatch(createSignalRHub(hub));
 ```
 
 Then you will create an effect to start listening to events before starting the Hub.
 
 ```ts
-initRealtime$ = createEffect(() => 
-    this.actions$.pipe(
-        ofType(SIGNALR_HUB_UNSTARTED),
-        mergeMapHubToAction(({ hub }) => {
-            // TODO : add event listeners
-            const whenEvent$ = hub.on('eventName').pipe(
-                map(x => createAction(x))
-            );
+initRealtime$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(SIGNALR_HUB_UNSTARTED),
+    mergeMapHubToAction(({ hub }) => {
+      // TODO : add event listeners
+      const whenEvent$ = hub.on("eventName").pipe(map((x) => createAction(x)));
 
-            return merge(
-                whenEvent$,
-                of(startSignalRHub(hub))
-            );
-        })
-    )
+      return merge(whenEvent$, of(startSignalRHub(hub)));
+    })
+  )
 );
 ```
 
 You can also send events at anytime.
 
 ```ts
-sendEvent$ = createEffect(() => 
-    this.actions$.pipe(
-        ofType(SEND_EVENT), // TODO : create a custom action
-        mergeMap(({ params }) => {
-            const hub = findHub(timeHub);
-            if (!hub) {
-                return of(hubNotFound(timeHub));
-            }
+sendEvent$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(SEND_EVENT), // TODO : create a custom action
+    mergeMap(({ params }) => {
+      const hub = findHub(timeHub);
+      if (!hub) {
+        return of(hubNotFound(timeHub));
+      }
 
-            // TODO : send event to the hub
-            return hub.send('eventName', params).pipe(
-                map(_ => sendEventFulfilled()),
-                catchError(error => of(sendEventFailed(error)))
-            );
-        })
-    )
+      // TODO : send event to the hub
+      return hub.send("eventName", params).pipe(
+        map((_) => sendEventFulfilled()),
+        catchError((error) => of(sendEventFailed(error)))
+      );
+    })
+  )
 );
 ```
 
@@ -115,37 +108,37 @@ You will then initialize your hubs in the same way but you need to know which on
 const hub1 = {}; // define hubName and url
 const hub2 = {}; // define hubName and url
 
-initHubOne$ = createEffect(() => 
-    this.actions$.pipe(
-        ofType(SIGNALR_HUB_UNSTARTED),
-        ofHub(hub1),
-        mergeMapHubToAction(({ action, hub }) => {
-            // TODO : init hub 1
-        })
-    )
+initHubOne$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(SIGNALR_HUB_UNSTARTED),
+    ofHub(hub1),
+    mergeMapHubToAction(({ action, hub }) => {
+      // TODO : init hub 1
+    })
+  )
 );
 
-initHubTwo$ = createEffect(() => 
-    this.actions$.pipe(
-        ofType(SIGNALR_HUB_UNSTARTED),
-        ofHub(hub2),
-        mergeMapHubToAction(({ action, hub }) => {
-            // TODO : init hub 2
-        })
-    )
+initHubTwo$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(SIGNALR_HUB_UNSTARTED),
+    ofHub(hub2),
+    mergeMapHubToAction(({ action, hub }) => {
+      // TODO : init hub 2
+    })
+  )
 );
 ```
 
 And then you can start your app when all hubs are connected the first time.
 
 ```ts
-appStarted$ = createEffect(() => 
-    this.store.pipe(
-        select(selectAreAllHubsConnected),
-        filter(areAllHubsConnected => !!areAllHubsConnected),
-        first(),
-        map(_ => of(appStarted())) // TODO : create a custom action when hubs are connected
-    )
+appStarted$ = createEffect(() =>
+  this.store.pipe(
+    select(selectAreAllHubsConnected),
+    filter((areAllHubsConnected) => !!areAllHubsConnected),
+    first(),
+    map((_) => of(appStarted())) // TODO : create a custom action when hubs are connected
+  )
 );
 ```
 
@@ -159,7 +152,8 @@ Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. He
 
 ```ts
 // try to reconnect every 10s (when the navigator is online)
-whenDisconnected$ = createReconnectEffect(this.actions$, 10 * 1000);
+const options: ReconnectEffectOptions = { intervalTimespan: 10 * 1000 };
+whenDisconnected$ = createReconnectEffect(this.actions$, options);
 ```
 
 In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is `disconnected` and when there is a network connection.
@@ -176,31 +170,35 @@ Of course, you can write your own `Effect` to you have the benefit to write your
 
 The SignalR Hub is an abstraction of the hub connection. It contains function you can use to:
 
-* start the connection
-* listen to events emitted
-* send a new event
+- start the connection
+- listen to events emitted
+- send a new event
 
 ```ts
 interface ISignalRHub {
-    hubName: string;
-    url: string;
-    options: IHttpConnectionOptions | undefined;
+  hubName: string;
+  url: string;
+  options: IHttpConnectionOptions | undefined;
 
-    start$: Observable<void>;
-    stop$: Observable<void>;
-    state$: Observable<string>;
-    error$: Observable<Error | undefined>;
+  start$: Observable<void>;
+  stop$: Observable<void>;
+  state$: Observable<string>;
+  error$: Observable<Error | undefined>;
 
-    constructor(hubName: string, url: string, options: IHttpConnectionOptions | undefined);
+  constructor(
+    hubName: string,
+    url: string,
+    options: IHttpConnectionOptions | undefined
+  );
 
-    start(): Observable<void>;
-    stop(): Observable<void>;
-    on<T>(eventName: string): Observable<T>;
-    off(eventName: string): void;
-    stream<T>(methodName: string, ...args: any[]): Observable<T>;
-    send<T>(methodName: string, ...args: any[]): Observable<T>;
-    sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
-    hasSubscriptions(): boolean;
+  start(): Observable<void>;
+  stop(): Observable<void>;
+  on<T>(eventName: string): Observable<T>;
+  off(eventName: string): void;
+  stream<T>(methodName: string, ...args: any[]): Observable<T>;
+  send<T>(methodName: string, ...args: any[]): Observable<T>;
+  sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
+  hasSubscriptions(): boolean;
 }
 ```
 
@@ -208,16 +206,23 @@ You can find an existing hub by its name and url.
 
 ```ts
 function findHub(hubName: string, url: string): ISignalRHub | undefined;
-function findHub({ hubName, url }: {
-    hubName: string;
-    url: string;
+function findHub({
+  hubName,
+  url,
+}: {
+  hubName: string;
+  url: string;
 }): ISignalRHub | undefined;
 ```
 
 And create a new hub.
 
 ```ts
-function createHub(hubName: string, url: string, options: IHttpConnectionOptions | undefined): ISignalRHub | undefined;
+function createHub(
+  hubName: string,
+  url: string,
+  options: IHttpConnectionOptions | undefined
+): ISignalRHub | undefined;
 ```
 
 </details>
@@ -233,21 +238,21 @@ const unstarted = "unstarted";
 const connected = "connected";
 const disconnected = "disconnected";
 
-type SignalRHubState = 
-    | typeof unstarted 
-    | typeof connected 
-    | typeof disconnected;
+type SignalRHubState =
+  | typeof unstarted
+  | typeof connected
+  | typeof disconnected;
 
 type SignalRHubStatus = {
-    hubName: string;
-    url: string;
-    state: SignalRHubState;
+  hubName: string;
+  url: string;
+  state: SignalRHubState;
 };
 ```
 
 ```ts
 class BaseSignalRStoreState {
-    hubStatuses: SignalRHubStatus[];
+  hubStatuses: SignalRHubStatus[];
 }
 ```
 
@@ -263,8 +268,12 @@ class BaseSignalRStoreState {
 
 ```ts
 const createSignalRHub = createAction(
-    '@ngrx/signalr/createHub',
-    props<{ hubName: string, url: string, options?: IHttpConnectionOptions | undefined }>()
+  "@ngrx/signalr/createHub",
+  props<{
+    hubName: string;
+    url: string;
+    options?: IHttpConnectionOptions | undefined;
+  }>()
 );
 ```
 
@@ -272,8 +281,8 @@ const createSignalRHub = createAction(
 
 ```ts
 const startSignalRHub = createAction(
-    '@ngrx/signalr/startHub',
-    props<{ hubName: string, url: string }>()
+  "@ngrx/signalr/startHub",
+  props<{ hubName: string; url: string }>()
 );
 ```
 
@@ -281,8 +290,8 @@ const startSignalRHub = createAction(
 
 ```ts
 const stopSignalRHub = createAction(
-    '@ngrx/signalr/stopHub',
-    props<{ hubName: string, url: string }>()
+  "@ngrx/signalr/stopHub",
+  props<{ hubName: string; url: string }>()
 );
 ```
 
@@ -290,8 +299,8 @@ const stopSignalRHub = createAction(
 
 ```ts
 const reconnectSignalRHub = createAction(
-    '@ngrx/signalr/reconnectHub',
-    props<{ hubName: string, url: string }>()
+  "@ngrx/signalr/reconnectHub",
+  props<{ hubName: string; url: string }>()
 );
 ```
 
@@ -299,8 +308,8 @@ const reconnectSignalRHub = createAction(
 
 ```ts
 export const hubNotFound = createAction(
-    '@ngrx/signalr/hubNotFound',
-    props<{ hubName: string, url: string }>()
+  "@ngrx/signalr/hubNotFound",
+  props<{ hubName: string; url: string }>()
 );
 ```
 
@@ -340,23 +349,17 @@ stopHub$;
 
 ```ts
 // used to select all hub statuses in state
-const hubStatuses$ = store.pipe(
-    select(selectHubsStatuses)
-);
+const hubStatuses$ = store.pipe(select(selectHubsStatuses));
 
 // used to select a single hub status based on its name and url
-const hubStatus$ = store.pipe(
-    select(selectHubStatus, { hubName, url })
-);
+const hubStatus$ = store.pipe(select(selectHubStatus, { hubName, url }));
 
 // used to know if all hubs are connected
-const areAllHubsConnected$ = store.pipe(
-    select(selectAreAllHubsConnected)
-);
+const areAllHubsConnected$ = store.pipe(select(selectAreAllHubsConnected));
 
 // used to know when a hub is in a particular state
 const hasHubState$ = store.pipe(
-    select(selectHasHubState, { hubName, url, state })
+  select(selectHasHubState, { hubName, url, state })
 );
 ```
 

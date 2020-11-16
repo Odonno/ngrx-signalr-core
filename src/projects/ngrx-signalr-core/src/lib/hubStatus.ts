@@ -1,17 +1,17 @@
-import { HubConnectionState } from '@microsoft/signalr';
-import { HubKeyDefinition } from './models';
+import { HubConnectionState } from "@microsoft/signalr";
+import { HubKeyDefinition } from "./models";
 
-export const unstarted = 'unstarted';
-export const connected = 'connected';
-export const disconnected = 'disconnected';
+export const unstarted = "unstarted";
+export const connected = "connected";
+export const disconnected = "disconnected";
 
 /**
  * List of given states a SignalR can be.
  */
 export const SignalRStates = {
-    unstarted,
-    connected,
-    disconnected
+  unstarted,
+  connected,
+  disconnected,
 };
 
 /**
@@ -19,25 +19,25 @@ export const SignalRStates = {
  * @param state The state of the hub connection.
  */
 export const toSignalRState = (state: HubConnectionState) => {
-    switch (state) {
-        case HubConnectionState.Connected:
-            return connected;
-        case HubConnectionState.Disconnected:
-            return disconnected;
-    }
+  switch (state) {
+    case HubConnectionState.Connected:
+      return connected;
+    case HubConnectionState.Disconnected:
+      return disconnected;
+  }
 };
 
 /**
  * Connection state definition of a SignalR hub.
  */
 export type SignalRHubState =
-    | typeof unstarted
-    | typeof connected
-    | typeof disconnected;
+  | typeof unstarted
+  | typeof connected
+  | typeof disconnected;
 
 /**
  * Status definition of a SignalR hub.
  */
 export type SignalRHubStatus = HubKeyDefinition & {
-    state: SignalRHubState;
+  state: SignalRHubState;
 };
