@@ -26,11 +26,13 @@ import {
 import {
   ofHub,
   exhaustMapHubToAction,
-  isOnline,
+  isOnline$,
   mergeMapHubToAction,
 } from "./operators";
 import { Action } from "@ngrx/store";
 import { connected, disconnected } from "./hubStatus";
+import { Observable } from "rxjs";
+import { TypedAction } from "@ngrx/store/src/models";
 
 @Injectable({
   providedIn: "root",
@@ -150,17 +152,25 @@ export class SignalREffects {
   constructor(private actions$: Actions<SignalRAction>) {}
 }
 
+type SignalrDisconnectedAction = {
+  hubName: string;
+  url: string;
+} & TypedAction<"@ngrx/signalr/disconnected">;
+
 export type ReconnectEffectOptions = {
   /**
-   * Hub name. If not provided, the effect will be applied to every SignalR Hub.
+   * Hub name, used to filter the hub to apply the reconnection effect.
+   * If not provided, the effect will be applied to every SignalR Hub.
    */
   hubName?: string;
 
   /**
-   * Timespan between each reconnection attempt (in milliseconds).
-   * Default value: 10s
+   * Returns the Observable to use to trigger reconnection of the hub (when disconnected).
+   * With this, you can customize the reconnection pattern based on your needs.
+   * If not provided, the default implementation will be applied : "trigger reconnection every 10s, only when there is a network connection"
+   * @param action Action dispatched when a hub was disconnected.
    */
-  intervalTimespan?: number;
+  reconnectionPolicy?: (action: SignalrDisconnectedAction) => Observable<any>;
 };
 
 const TEN_SECONDS = 10 * 1000;
@@ -172,29 +182,32 @@ const TEN_SECONDS = 10 * 1000;
  */
 export const createReconnectEffect = (
   actions$: Actions<Action>,
-  options: ReconnectEffectOptions
+  options?: ReconnectEffectOptions
 ) => {
+  const defaultReconnect$ = timer(0, TEN_SECONDS).pipe(
+    switchMap(isOnline$),
+    filter((isOnline) => isOnline)
+  );
+
   return createEffect(() =>
     actions$.pipe(
       ofType(signalrDisconnected),
       filter(
-        (action) => !options.hubName || action.hubName === options.hubName
+        (action) => !options?.hubName || action.hubName === options.hubName
       ),
       groupBy((action) => action.hubName),
       mergeMap((group) =>
         group.pipe(
-          exhaustMapHubToAction(({ action }) =>
-            isOnline().pipe(
-              switchMap((online) => {
-                if (!online) {
-                  return EMPTY;
-                }
-                return timer(0, options.intervalTimespan || TEN_SECONDS);
-              }),
+          exhaustMapHubToAction(({ action }) => {
+            const reconnect$ = options?.reconnectionPolicy
+              ? options.reconnectionPolicy(action)
+              : defaultReconnect$;
+
+            return reconnect$.pipe(
               map((_) => reconnectSignalRHub(action)),
               takeUntil(actions$.pipe(ofType(signalrConnected), ofHub(action)))
-            )
-          ),
+            );
+          }),
           takeUntil(
             actions$.pipe(
               ofType(stopSignalRHub),

@@ -22,7 +22,7 @@ import { ISignalRHub } from "./SignalRHub.interface";
 /**
  * Returns an Observable with the current status of network connection, whether online or offline.
  */
-export const isOnline = () => {
+export const isOnline$ = () => {
   const offline$ = fromEvent(window, "offline").pipe(map(() => false));
   const online$ = fromEvent(window, "online").pipe(map(() => true));
 
