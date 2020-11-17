@@ -193,15 +193,17 @@ export const createReconnectEffect = (
     actions$.pipe(
       ofType(signalrDisconnected),
       filter(
-        (action) => !options?.hubName || action.hubName === options.hubName
+        (action) =>
+          !options || !options.hubName || action.hubName === options.hubName
       ),
       groupBy((action) => action.hubName),
       mergeMap((group) =>
         group.pipe(
           exhaustMapHubToAction(({ action }) => {
-            const reconnect$ = options?.reconnectionPolicy
-              ? options.reconnectionPolicy(action)
-              : defaultReconnect$;
+            const reconnect$ =
+              options && options.reconnectionPolicy
+                ? options.reconnectionPolicy(action)
+                : defaultReconnect$;
 
             return reconnect$.pipe(
               map((_) => reconnectSignalRHub(action)),
