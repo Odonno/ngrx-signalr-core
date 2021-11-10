@@ -1,8 +1,7 @@
 import { BaseSignalRStoreState } from "./reducer";
 import { DEFAULT_SIGNALR_FEATURENAME } from "./constants";
 import { createSelector } from "@ngrx/store";
-import { SignalRHubState, connected } from "./hubStatus";
-import { HubKeyDefinition } from "./models";
+import { SignalRHubState, connected, SignalRHubStatus } from "./hubStatus";
 
 interface RootState {
   signalr: BaseSignalRStoreState;
@@ -20,35 +19,39 @@ export const selectSignalrState = (state: RootState) =>
  */
 export const selectHubsStatuses = createSelector(
   selectSignalrState,
-  (state) => state.hubStatuses
+  (state: BaseSignalRStoreState) => state.hubStatuses
 );
 
-type SelectHubStatusProps = HubKeyDefinition;
 /**
  * Select a single hub status.
  */
-export const selectHubStatus = createSelector(
-  selectSignalrState,
-  (state: BaseSignalRStoreState, { hubName, url }: SelectHubStatusProps) =>
-    state.hubStatuses.filter(
-      (hs) => hs.hubName === hubName && hs.url === url
-    )[0]
-);
+export const selectHubStatus = (hubName: string, url: string) =>
+  createSelector(
+    selectSignalrState,
+    (state: BaseSignalRStoreState) =>
+      state.hubStatuses.filter(
+        (hs) => hs.hubName === hubName && hs.url === url
+      )[0]
+  );
 
 /**
  * Select a value (true or false) when all hubs are connected.
  */
 export const selectAreAllHubsConnected = createSelector(
   selectHubsStatuses,
-  (hubStatuses) => hubStatuses.every((hs) => hs.state === connected)
+  (hubStatuses: SignalRHubStatus[]) =>
+    hubStatuses.every((hs) => hs.state === connected)
 );
 
-type SelectHasHubStateProps = HubKeyDefinition & { state: SignalRHubState };
 /**
  * Select a value (true or false) when a single hub have a given status (unstarted, connected, disconnected).
  */
-export const selectHasHubState = createSelector(
-  selectHubStatus,
-  (state, props: SelectHasHubStateProps) =>
-    !!state && state.state === props.state
-);
+export const selectHasHubState = (
+  hubName: string,
+  url: string,
+  hubState: SignalRHubState
+) =>
+  createSelector(
+    selectHubStatus(hubName, url),
+    (state: SignalRHubStatus) => !!state && state.state === hubState
+  );
