@@ -54,7 +54,7 @@ export class SignalRHub implements ISignalRHub {
         this._startSubject.next();
         this._stateSubject.next(connected);
       })
-      .catch((error) => this._startSubject.error(error));
+      .catch((error) => this._errorSubject.next(error));
 
     return this._startSubject.asObservable();
   }
@@ -72,7 +72,7 @@ export class SignalRHub implements ISignalRHub {
         this._stopSubject.next();
         this._stateSubject.next(disconnected);
       })
-      .catch((error) => this._stopSubject.error(error));
+      .catch((error) => this._errorSubject.next(error));
 
     return this._stopSubject.asObservable();
   }
