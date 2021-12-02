@@ -1,6 +1,6 @@
 {
   "name": "ngrx-signalr-core",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "description": "A library to handle realtime SignalR Core events using angular and rxjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
