@@ -7,7 +7,7 @@ import {
 import { Subject, Observable, throwError, from } from "rxjs";
 import { share } from "rxjs/operators";
 import { connected, disconnected } from "./hubStatus";
-import { createConnection, getOrCreateSubject } from "./signalr";
+import { createConnection } from "./signalr";
 
 export class SignalRHub implements ISignalRHub {
   private _connection: HubConnection | undefined;
@@ -78,22 +78,26 @@ export class SignalRHub implements ISignalRHub {
   }
 
   on<T>(eventName: string) {
-    const connection = this.ensureConnectionOpened();
+    return new Observable<T>((observer) => {
+      const connection = this.ensureConnectionOpened();
 
-    const subject = getOrCreateSubject<T>(this._subjects, eventName);
-    connection.on(eventName, (data: T) => subject.next(data));
+      const callback = (data: T) => observer.next(data);
 
-    return subject.asObservable();
-  }
+      connection.on(eventName, callback);
 
-  off(eventName: string) {
-    if (!this._connection) {
-      return throwError(
-        "The connection has not been started yet. Please start the connection by invoking the start method before attempting to stop listening from the server."
-      );
-    }
+      const errorSubscription = this._errorSubject.subscribe(() => {
+        observer.error(new Error(`The connection has been closed.`));
+      });
+      const stopSubscription = this._stopSubject.subscribe(() => {
+        observer.complete();
+      });
 
-    this._connection.off(eventName);
+      return () => {
+        errorSubscription.unsubscribe();
+        stopSubscription.unsubscribe();
+        connection.off(eventName, callback);
+      };
+    }).pipe(share());
   }
 
   stream<T>(methodName: string, ...args: any[]) {
