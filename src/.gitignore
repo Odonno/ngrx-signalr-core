@@ -88,3 +88,6 @@ typings/
 
 # Compiled files
 dist/
+
+# Cached files for Angular
+.angular/
