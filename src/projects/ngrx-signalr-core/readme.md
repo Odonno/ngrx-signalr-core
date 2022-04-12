@@ -48,7 +48,7 @@ Then you will create an effect to start listening to events before starting the 
 ```ts
 initRealtime$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     mergeMapHubToAction(({ hub }) => {
       // TODO : add event listeners
       const whenEvent$ = hub.on("eventName").pipe(map((x) => createAction(x)));
@@ -110,7 +110,7 @@ const hub2 = {}; // define hubName and url
 
 initHubOne$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     ofHub(hub1),
     mergeMapHubToAction(({ action, hub }) => {
       // TODO : init hub 1
@@ -120,7 +120,7 @@ initHubOne$ = createEffect(() =>
 
 initHubTwo$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     ofHub(hub2),
     mergeMapHubToAction(({ action, hub }) => {
       // TODO : init hub 2
@@ -151,13 +151,15 @@ appStarted$ = createEffect(() =>
 Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. Here is an example on how to apply periodic reconnection:
 
 ```ts
-// try to reconnect every 10s (when the navigator is online)
-whenDisconnected$ = createReconnectEffect(this.actions$, 10 * 1000);
+// try to reconnect all hubs every 10s (when the navigator is online)
+whenDisconnected$ = createReconnectEffect(this.actions$);
 ```
 
-In this example, we apply a periodic reconnection attempt every 10 seconds when the hub is `disconnected` and when there is a network connection.
+In this example, we did not use a custom reconnection policy. So the default behavior will automatically be to apply a periodic reconnection attempt every 10 seconds when the hub is `disconnected` and when there is a network connection.
 
-Of course, you can write your own `Effect` to you have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
+Of course, you can write your own `reconnectionPolicy` inside the options of the function, so you have the benefit to write your own reconnection pattern (periodic retry, exponential retry, etc..).
+
+You can also filter by `hubName` so that it will affect only one hub.
 
 </details>
 
@@ -306,7 +308,7 @@ const reconnectSignalRHub = createAction(
 `hubNotFound` can be used when you do retrieve your SignalR hub based on its name and url.
 
 ```ts
-export const hubNotFound = createAction(
+const hubNotFound = createAction(
   "@ngrx/signalr/hubNotFound",
   props<{ hubName: string; url: string }>()
 );
@@ -351,13 +353,15 @@ stopHub$;
 const hubStatuses$ = store.pipe(select(selectHubsStatuses));
 
 // used to select a single hub status based on its name and url
-const hubStatus$ = store.pipe(select(selectHubStatus(hubName, url)));
+const hubStatus$ = store.pipe(select(selectHubStatus, { hubName, url }));
 
 // used to know if all hubs are connected
 const areAllHubsConnected$ = store.pipe(select(selectAreAllHubsConnected));
 
 // used to know when a hub is in a particular state
-const hasHubState$ = store.pipe(select(selectHasHubState(hubName, url, state)));
+const hasHubState$ = store.pipe(
+  select(selectHasHubState, { hubName, url, state })
+);
 ```
 
 </details>

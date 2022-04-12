@@ -48,7 +48,7 @@ Then you will create an effect to start listening to events before starting the 
 ```ts
 initRealtime$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     mergeMapHubToAction(({ hub }) => {
       // TODO : add event listeners
       const whenEvent$ = hub.on("eventName").pipe(map((x) => createAction(x)));
@@ -110,7 +110,7 @@ const hub2 = {}; // define hubName and url
 
 initHubOne$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     ofHub(hub1),
     mergeMapHubToAction(({ action, hub }) => {
       // TODO : init hub 1
@@ -120,7 +120,7 @@ initHubOne$ = createEffect(() =>
 
 initHubTwo$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     ofHub(hub2),
     mergeMapHubToAction(({ action, hub }) => {
       // TODO : init hub 2
@@ -308,7 +308,7 @@ const reconnectSignalRHub = createAction(
 `hubNotFound` can be used when you do retrieve your SignalR hub based on its name and url.
 
 ```ts
-export const hubNotFound = createAction(
+const hubNotFound = createAction(
   "@ngrx/signalr/hubNotFound",
   props<{ hubName: string; url: string }>()
 );

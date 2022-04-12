@@ -13,12 +13,11 @@ export const createSignalRHub = createAction(
   }>()
 );
 
-export const SIGNALR_HUB_UNSTARTED = "@ngrx/signalr/hubUnstarted";
 /**
  * Action dispatched when a hub is at `unstarted` state.
  */
 export const signalrHubUnstarted = createAction(
-  SIGNALR_HUB_UNSTARTED,
+  "@ngrx/signalr/hubUnstarted",
   props<{ hubName: string; url: string }>()
 );
 
@@ -47,39 +46,35 @@ export const reconnectSignalRHub = createAction(
   props<{ hubName: string; url: string }>()
 );
 
-export const SIGNALR_HUB_FAILED_TO_START = "@ngrx/signalr/hubFailedToStart";
 /**
  * Action dispatched when a SignalR failed to start.
  */
 export const signalrHubFailedToStart = createAction(
-  SIGNALR_HUB_FAILED_TO_START,
+  "@ngrx/signalr/hubFailedToStart",
   props<{ hubName: string; url: string; error: any }>()
 );
 
-export const SIGNALR_CONNECTED = "@ngrx/signalr/connected";
 /**
  * Action dispatched when a hub is at `connected` state.
  */
 export const signalrConnected = createAction(
-  SIGNALR_CONNECTED,
+  "@ngrx/signalr/connected",
   props<{ hubName: string; url: string }>()
 );
 
-export const SIGNALR_DISCONNECTED = "@ngrx/signalr/disconnected";
 /**
  * Action dispatched when a hub is at `disconnected` state.
  */
 export const signalrDisconnected = createAction(
-  SIGNALR_DISCONNECTED,
+  "@ngrx/signalr/disconnected",
   props<{ hubName: string; url: string }>()
 );
 
-export const SIGNALR_ERROR = "@ngrx/signalr/error";
 /**
  * Action dispatched when an error occured with a SignalR hub.
  */
 export const signalrError = createAction(
-  SIGNALR_ERROR,
+  "@ngrx/signalr/error",
   props<{ hubName: string; url: string; error: any }>()
 );
 
