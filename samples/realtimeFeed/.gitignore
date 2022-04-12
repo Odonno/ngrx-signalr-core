@@ -456,3 +456,6 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/node,visualstudio
+
+# Cached files for Angular
+.angular/

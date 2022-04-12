@@ -49,12 +49,7 @@ Creating a SignalR Hub is not enough. You need to start it manually.
 initRealtime$ = createEffect(() =>
   this.actions$.pipe(
     ofType(signalrHubUnstarted),
-    mergeMapHubToAction(({ hub }) => {
-      // TODO : add event listeners
-      const whenEvent$ = hub.on("eventName").pipe(map((x) => createAction(x)));
-
-      return merge(whenEvent$, of(startSignalRHub(hub)));
-    })
+    map((hub) => startSignalRHub(hub))
   )
 );
 ```
