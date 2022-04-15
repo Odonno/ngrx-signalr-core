@@ -49,11 +49,6 @@ export interface ISignalRHub {
    */
   on<T>(eventName: string): Observable<T>;
   /**
-   * Stop to listen to a SignalR event from the server.
-   * @param eventName Name of the event to listen.
-   */
-  off(eventName: string): void;
-  /**
    * Receive realtime stream events from the server
    * @param methodName Name of the stream.
    * @param args Arguments to pass to the stream function (the hub function).

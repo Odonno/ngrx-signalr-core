@@ -43,17 +43,33 @@ const hub = {
 this.store.dispatch(createSignalRHub(hub));
 ```
 
-Then you will create an effect to start listening to events before starting the Hub.
+Creating a SignalR Hub is not enough. You need to start it manually.
 
 ```ts
 initRealtime$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
+    map((hub) => startSignalRHub(hub))
+  )
+);
+```
+
+Then you will create an effect to start listening to events once the hub is connected.
+
+```ts
+listenToEvents$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(signalrConnected),
     mergeMapHubToAction(({ hub }) => {
       // TODO : add event listeners
-      const whenEvent$ = hub.on("eventName").pipe(map((x) => createAction(x)));
+      const whenEvent1$ = hub
+        .on("eventName1")
+        .pipe(map((x) => createAction(x)));
+      const whenEvent2$ = hub
+        .on("eventName2")
+        .pipe(map((x) => createAction(x)));
 
-      return merge(whenEvent$, of(startSignalRHub(hub)));
+      return merge(whenEvent1$, whenEvent2$);
     })
   )
 );
@@ -110,7 +126,7 @@ const hub2 = {}; // define hubName and url
 
 initHubOne$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     ofHub(hub1),
     mergeMapHubToAction(({ action, hub }) => {
       // TODO : init hub 1
@@ -120,7 +136,7 @@ initHubOne$ = createEffect(() =>
 
 initHubTwo$ = createEffect(() =>
   this.actions$.pipe(
-    ofType(SIGNALR_HUB_UNSTARTED),
+    ofType(signalrHubUnstarted),
     ofHub(hub2),
     mergeMapHubToAction(({ action, hub }) => {
       // TODO : init hub 2
@@ -195,7 +211,6 @@ interface ISignalRHub {
   start(): Observable<void>;
   stop(): Observable<void>;
   on<T>(eventName: string): Observable<T>;
-  off(eventName: string): void;
   stream<T>(methodName: string, ...args: any[]): Observable<T>;
   send<T>(methodName: string, ...args: any[]): Observable<T>;
   sendStream<T>(methodName: string, subject: Subject<T>): Observable<void>;
@@ -308,7 +323,7 @@ const reconnectSignalRHub = createAction(
 `hubNotFound` can be used when you do retrieve your SignalR hub based on its name and url.
 
 ```ts
-export const hubNotFound = createAction(
+const hubNotFound = createAction(
   "@ngrx/signalr/hubNotFound",
   props<{ hubName: string; url: string }>()
 );

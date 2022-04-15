@@ -3,11 +3,6 @@
  */
 
 export {
-  SIGNALR_HUB_UNSTARTED,
-  SIGNALR_HUB_FAILED_TO_START,
-  SIGNALR_CONNECTED,
-  SIGNALR_DISCONNECTED,
-  SIGNALR_ERROR,
   SignalRAction,
   createSignalRHub,
   signalrHubUnstarted,
