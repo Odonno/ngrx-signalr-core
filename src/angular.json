@@ -41,6 +41,5 @@
         }
       }
     }
-  },
-  "defaultProject": "ngrx-signalr-core"
+  }
 }
