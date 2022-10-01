@@ -5,7 +5,6 @@ import {
   ofHub,
   findHub,
   hubNotFound,
-  createReconnectEffect,
   signalrHubUnstarted,
   signalrConnected,
 } from "ngrx-signalr-core";
@@ -30,8 +29,6 @@ export class FeedsEffects {
     private readonly actions$: Actions,
     private readonly store: Store<RootState>
   ) {}
-
-  whenDisconnected$ = createReconnectEffect(this.actions$);
 
   initRealtime$ = createEffect(() =>
     this.actions$.pipe(
