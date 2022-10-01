@@ -5,7 +5,8 @@ This library was generated with [Angular CLI](https://github.com/angular/angular
 ## Code scaffolding
 
 Run `ng generate component component-name --project ngrx-signalr-core` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngrx-signalr-core`.
-> Note: Don't forget to add `--project ngrx-signalr-core` or else it will be added to the default project in your `angular.json` file. 
+
+> Note: Don't forget to add `--project ngrx-signalr-core` or else it will be added to the default project in your `angular.json` file.
 
 ## Build
 
@@ -13,7 +14,7 @@ Run `ng build ngrx-signalr-core` to build the project. The build artifacts will 
 
 ## Publishing
 
-After building your library with `ng build ngrx-signalr-core`, go to the dist folder `cd dist/ngrx-signalr-core` and run `npm publish`.
+After building your library with `ng build ngrx-signalr-core --configuration production`, go to the dist folder `cd dist/ngrx-signalr-core` and run `npm publish`.
 
 ## Running unit tests
 
