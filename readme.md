@@ -164,7 +164,32 @@ appStarted$ = createEffect(() =>
 <summary>Handling reconnection</summary>
 <br>
 
-Since .NET Core, you need to handle the SignalR Hub reconnection by yourself. Here is an example on how to apply periodic reconnection:
+~~Since .NET Core, you need to handle the SignalR Hub reconnection by yourself.~~
+
+The simple way to enable hub reconnection is to enable `automatic reconnect` when creating the hub. You can use one of the 3 options described here:
+
+```ts
+// Using the Default reconnection policy.
+// By default, the client will wait 0, 2, 10 and 30 seconds respectively before trying up to 4 reconnect attempts.
+const action = createSignalRHub(hub, url, options, true);
+
+// Using an array containing the delays in milliseconds before trying each reconnect attempt.
+// The length of the array represents how many failed reconnect attempts it takes before the client will stop attempting to reconnect.
+const action = createSignalRHub(hub, url, options, [10000, 20000, 30000]); // after 10s, after 20s, after 30s
+
+// Using a custom reconnect policy.
+// The retry policy that controls the timing and number of reconnect attempts.
+const action = createSignalRHub(hub, url, options, {
+  nextRetryDelayInMilliseconds: (context) => {
+    // ...
+    return 10000;
+  },
+});
+
+this.store.dispatch(action);
+```
+
+It is currently deprecated but you can perform your own reconnection strategy using the power of @ngrx. Here is an example on how to apply periodic reconnection:
 
 ```ts
 // try to reconnect all hubs every 10s (when the navigator is online)
