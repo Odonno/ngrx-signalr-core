@@ -2,6 +2,7 @@ import { ISignalRHub } from "./SignalRHub.interface";
 import {
   HubConnection,
   IHttpConnectionOptions,
+  IRetryPolicy,
   Subject as SignalRSubject,
 } from "@microsoft/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
@@ -25,7 +26,8 @@ export class SignalRHub implements ISignalRHub {
   constructor(
     public hubName: string,
     public url: string,
-    public options: IHttpConnectionOptions | undefined
+    public options: IHttpConnectionOptions | undefined,
+    public automaticReconnect: boolean | number[] | IRetryPolicy | undefined
   ) {
     this.start$ = this._startSubject.asObservable();
     this.stop$ = this._stopSubject.asObservable();
@@ -35,7 +37,12 @@ export class SignalRHub implements ISignalRHub {
 
   private ensureConnectionOpened() {
     if (!this._connection) {
-      this._connection = createConnection(this.url, this.options);
+      this._connection = createConnection(
+        this.url,
+        this.options,
+        this.automaticReconnect
+      );
+
       this._connection.onclose((error) => {
         this._errorSubject.next(error);
         this._stateSubject.next(disconnected);

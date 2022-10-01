@@ -48,7 +48,13 @@ export class SignalREffects {
     this.actions$.pipe(
       ofType(createSignalRHub),
       map((action) => {
-        const hub = createHub(action.hubName, action.url, action.options);
+        const hub = createHub(
+          action.hubName,
+          action.url,
+          action.options,
+          action.automaticReconnect
+        );
+
         if (!hub) {
           return signalrError({
             hubName: action.hubName,
@@ -176,6 +182,7 @@ export type ReconnectEffectOptions = {
 const TEN_SECONDS = 10 * 1000;
 
 /**
+ * @deprecated Use `automaticReconnect` option when creating the SignalR hub.
  * Create an @ngrx effect to handle SignalR reconnection automatically.
  * @param actions$ Observable of all actions dispatched in the current app.
  * @param options Options to configure the effect.

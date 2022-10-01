@@ -1,4 +1,4 @@
-import { IHttpConnectionOptions } from "@microsoft/signalr";
+import { IHttpConnectionOptions, IRetryPolicy } from "@microsoft/signalr";
 import { createAction, props, union } from "@ngrx/store";
 
 /**
@@ -10,6 +10,7 @@ export const createSignalRHub = createAction(
     hubName: string;
     url: string;
     options?: IHttpConnectionOptions | undefined;
+    automaticReconnect?: boolean | number[] | IRetryPolicy | undefined;
   }>()
 );
 
@@ -38,6 +39,7 @@ export const stopSignalRHub = createAction(
 );
 
 /**
+ * @deprecated Use `automaticReconnect` option when creating the SignalR hub.
  * Action to dispatch in order to reconnect to a SignalR hub.
  * It can be automatically dispatched using `createReconnectEffect` effect.
  */
