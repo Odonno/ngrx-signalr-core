@@ -1,4 +1,8 @@
-import { IHttpConnectionOptions, IRetryPolicy } from "@microsoft/signalr";
+import {
+  IHttpConnectionOptions,
+  IHubProtocol,
+  IRetryPolicy,
+} from "@microsoft/signalr";
 import { testingEnabled, hubCreationFunc } from "./testing";
 import { ISignalRHub } from "./SignalRHub.interface";
 import { SignalRHub } from "./SignalRHub";
@@ -38,15 +42,23 @@ export function findHub(
  * @param url Url of the hub.
  * @param options Configuration of the hub.
  * @param automaticReconnect Options to configure the {@link @microsoft/signalr.HubConnection} to automatically attempt to reconnect if the connection is lost.
+ * @param withHubProtocol Options to configure the {@link @microsoft/signalr.HubConnection} to use specified {@link @microsoft/signalr.IHubProtocol}.
  */
 export const createHub = (
   hubName: string,
   url: string,
   options?: IHttpConnectionOptions | undefined,
-  automaticReconnect?: boolean | number[] | IRetryPolicy | undefined
+  automaticReconnect?: boolean | number[] | IRetryPolicy | undefined,
+  withHubProtocol?: IHubProtocol
 ): ISignalRHub | undefined => {
   if (testingEnabled) {
-    const hub = hubCreationFunc(hubName, url, options, automaticReconnect);
+    const hub = hubCreationFunc(
+      hubName,
+      url,
+      options,
+      automaticReconnect,
+      withHubProtocol
+    );
     if (hub) {
       hubs.push(hub);
       return hub;
@@ -54,7 +66,13 @@ export const createHub = (
     return undefined;
   }
 
-  const hub = new SignalRHub(hubName, url, options, automaticReconnect);
+  const hub = new SignalRHub(
+    hubName,
+    url,
+    options,
+    automaticReconnect,
+    withHubProtocol
+  );
   hubs.push(hub);
   return hub;
 };

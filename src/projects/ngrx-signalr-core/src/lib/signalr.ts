@@ -2,12 +2,14 @@ import {
   IHttpConnectionOptions,
   HubConnectionBuilder,
   IRetryPolicy,
+  IHubProtocol,
 } from "@microsoft/signalr";
 
 export const createConnection = (
   url: string,
   options?: IHttpConnectionOptions | undefined,
-  automaticReconnect?: boolean | number[] | IRetryPolicy | undefined
+  automaticReconnect?: boolean | number[] | IRetryPolicy | undefined,
+  withHubProtocol?: IHubProtocol
 ) => {
   const builder = new HubConnectionBuilder();
 
@@ -30,6 +32,10 @@ export const createConnection = (
     "nextRetryDelayInMilliseconds" in automaticReconnect
   ) {
     builder.withAutomaticReconnect(automaticReconnect);
+  }
+
+  if (withHubProtocol) {
+    builder.withHubProtocol(withHubProtocol);
   }
 
   return builder.build();

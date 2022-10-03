@@ -1,11 +1,16 @@
-import { IHttpConnectionOptions, IRetryPolicy } from "@microsoft/signalr";
+import {
+  IHttpConnectionOptions,
+  IHubProtocol,
+  IRetryPolicy,
+} from "@microsoft/signalr";
 import { SignalRTestingHub } from "./SignalRHub.testing";
 
 type HubCreationFunc = (
   hubName: string,
   url: string,
   options?: IHttpConnectionOptions | undefined,
-  automaticReconnect?: boolean | number[] | IRetryPolicy | undefined
+  automaticReconnect?: boolean | number[] | IRetryPolicy | undefined,
+  withHubProtocol?: IHubProtocol
 ) => SignalRTestingHub | undefined;
 
 export let testingEnabled = false;

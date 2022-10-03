@@ -52,7 +52,8 @@ export class SignalREffects {
           action.hubName,
           action.url,
           action.options,
-          action.automaticReconnect
+          action.automaticReconnect,
+          action.withHubProtocol
         );
 
         if (!hub) {
