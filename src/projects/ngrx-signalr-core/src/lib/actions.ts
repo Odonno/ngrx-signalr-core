@@ -1,4 +1,8 @@
-import { IHttpConnectionOptions, IRetryPolicy } from "@microsoft/signalr";
+import {
+  IHttpConnectionOptions,
+  IRetryPolicy,
+  IHubProtocol,
+} from "@microsoft/signalr";
 import { createAction, props, union } from "@ngrx/store";
 
 /**
@@ -11,6 +15,7 @@ export const createSignalRHub = createAction(
     url: string;
     options?: IHttpConnectionOptions | undefined;
     automaticReconnect?: boolean | number[] | IRetryPolicy | undefined;
+    withHubProtocol?: IHubProtocol;
   }>()
 );
 

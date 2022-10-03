@@ -3,6 +3,7 @@ import {
   HubConnection,
   IHttpConnectionOptions,
   IRetryPolicy,
+  IHubProtocol,
   Subject as SignalRSubject,
 } from "@microsoft/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
@@ -27,7 +28,8 @@ export class SignalRHub implements ISignalRHub {
     public hubName: string,
     public url: string,
     public options: IHttpConnectionOptions | undefined,
-    public automaticReconnect: boolean | number[] | IRetryPolicy | undefined
+    public automaticReconnect: boolean | number[] | IRetryPolicy | undefined,
+    public withHubProtocol: IHubProtocol
   ) {
     this.start$ = this._startSubject.asObservable();
     this.stop$ = this._stopSubject.asObservable();
@@ -40,7 +42,8 @@ export class SignalRHub implements ISignalRHub {
       this._connection = createConnection(
         this.url,
         this.options,
-        this.automaticReconnect
+        this.automaticReconnect,
+        this.withHubProtocol
       );
 
       this._connection.onclose((error) => {
