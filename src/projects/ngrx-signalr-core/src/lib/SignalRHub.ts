@@ -50,6 +50,12 @@ export class SignalRHub implements ISignalRHub {
         this._errorSubject.next(error);
         this._stateSubject.next(disconnected);
       });
+      this._connection.onreconnecting(() => {
+        this._stateSubject.next(reconnecting);
+      });
+      this._connection.onreconnected(() => {
+        this._stateSubject.next(connected);
+      });
     }
 
     return this._connection;

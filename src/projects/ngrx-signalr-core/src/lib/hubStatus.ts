@@ -4,6 +4,7 @@ import { HubKeyDefinition } from "./models";
 export const unstarted = "unstarted";
 export const connected = "connected";
 export const disconnected = "disconnected";
+export const reconnecting = "reconnecting";
 
 /**
  * List of given states a SignalR can be.
