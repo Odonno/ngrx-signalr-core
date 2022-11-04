@@ -8,7 +8,7 @@ import {
 } from "@microsoft/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
 import { share } from "rxjs/operators";
-import { connected, disconnected } from "./hubStatus";
+import { connected, disconnected, reconnecting } from "./hubStatus";
 import { createConnection } from "./signalr";
 
 export class SignalRHub implements ISignalRHub {

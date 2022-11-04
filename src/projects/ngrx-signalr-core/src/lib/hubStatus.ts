@@ -13,6 +13,7 @@ export const SignalRStates = {
   unstarted,
   connected,
   disconnected,
+  reconnecting,
 };
 
 /**
@@ -25,6 +26,8 @@ export const toSignalRState = (state: HubConnectionState) => {
       return connected;
     case HubConnectionState.Disconnected:
       return disconnected;
+    case HubConnectionState.Reconnecting:
+      return reconnecting;
   }
 };
 
@@ -34,7 +37,8 @@ export const toSignalRState = (state: HubConnectionState) => {
 export type SignalRHubState =
   | typeof unstarted
   | typeof connected
-  | typeof disconnected;
+  | typeof disconnected
+  | typeof reconnecting;
 
 /**
  * Status definition of a SignalR hub.

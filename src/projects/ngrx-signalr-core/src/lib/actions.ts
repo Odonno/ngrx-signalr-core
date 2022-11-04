@@ -70,6 +70,14 @@ export const signalrConnected = createAction(
 );
 
 /**
+ * Action dispatched when a hub is at `reconnecting` state.
+ */
+export const signalrReconnecting = createAction(
+  "@ngrx/signalr/reconnecting",
+  props<{ hubName: string; url: string }>()
+);
+
+/**
  * Action dispatched when a hub is at `disconnected` state.
  */
 export const signalrDisconnected = createAction(
@@ -101,6 +109,7 @@ const signalRAction = union({
   reconnectSignalRHub,
   signalrHubFailedToStart,
   signalrConnected,
+  signalrReconnecting,
   signalrDisconnected,
   signalrError,
   hubNotFound,
