@@ -4,12 +4,14 @@ import {
   unstarted,
   connected,
   disconnected,
+  reconnecting,
 } from "./hubStatus";
 import { createReducer, on, Action } from "@ngrx/store";
 import {
   createSignalRHub,
   signalrHubUnstarted,
   signalrConnected,
+  signalrReconnecting,
   signalrDisconnected,
 } from "./actions";
 
@@ -61,6 +63,20 @@ const reducer = createReducer<BaseSignalRStoreState>(
           return {
             ...hs,
             state: connected as SignalRHubState,
+          };
+        }
+        return hs;
+      }),
+    };
+  }),
+  on(signalrReconnecting, (state, action) => {
+    return {
+      ...state,
+      hubStatuses: state.hubStatuses.map((hs) => {
+        if (hs.hubName === action.hubName && hs.url === action.url) {
+          return {
+            ...hs,
+            state: reconnecting as SignalRHubState,
           };
         }
         return hs;

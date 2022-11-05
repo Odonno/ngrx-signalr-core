@@ -8,7 +8,7 @@ import {
 } from "@microsoft/signalr";
 import { Subject, Observable, throwError, from } from "rxjs";
 import { share } from "rxjs/operators";
-import { connected, disconnected } from "./hubStatus";
+import { connected, disconnected, reconnecting } from "./hubStatus";
 import { createConnection } from "./signalr";
 
 export class SignalRHub implements ISignalRHub {
@@ -49,6 +49,12 @@ export class SignalRHub implements ISignalRHub {
       this._connection.onclose((error) => {
         this._errorSubject.next(error);
         this._stateSubject.next(disconnected);
+      });
+      this._connection.onreconnecting(() => {
+        this._stateSubject.next(reconnecting);
+      });
+      this._connection.onreconnected(() => {
+        this._stateSubject.next(connected);
       });
     }
 
