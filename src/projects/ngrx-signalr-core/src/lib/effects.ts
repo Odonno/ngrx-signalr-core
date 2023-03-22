@@ -97,7 +97,7 @@ export class SignalREffects {
           mergeMap((state) => {
             if (state === connected) {
               return of(
-                signalrConnected({ hubName: action.hubName, url: action.url })
+                signalrConnected({ hubName: action.hubName, url: action.url, connectionId: hub.connectionId })
               );
             }
             if (state === disconnected) {

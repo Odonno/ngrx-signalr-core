@@ -19,6 +19,11 @@ export interface ISignalRHub {
   options: IHttpConnectionOptions | undefined;
 
   /**
+   * Connection ID of the client.
+   */
+  connectionId: string | undefined;
+
+  /**
    * Observable that gives info when a start event occured.
    */
   start$: Observable<void>;
