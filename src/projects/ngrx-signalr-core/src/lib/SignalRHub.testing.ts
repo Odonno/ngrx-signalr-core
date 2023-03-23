@@ -15,6 +15,10 @@ export abstract class SignalRTestingHub implements ISignalRHub {
   state$: Observable<string>;
   error$: Observable<Error | undefined>;
 
+  get connectionId() {
+    return undefined;
+  }
+
   constructor(
     public hubName: string,
     public url: string,

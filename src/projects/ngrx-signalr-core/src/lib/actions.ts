@@ -66,7 +66,7 @@ export const signalrHubFailedToStart = createAction(
  */
 export const signalrConnected = createAction(
   "@ngrx/signalr/connected",
-  props<{ hubName: string; url: string }>()
+  props<{ hubName: string; url: string; connectionId: string | undefined }>()
 );
 
 /**

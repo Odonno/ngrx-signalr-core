@@ -24,6 +24,10 @@ export class SignalRHub implements ISignalRHub {
   state$: Observable<string>;
   error$: Observable<Error | undefined>;
 
+  get connectionId() {
+    return this._connection?.connectionId ?? undefined;
+  }
+
   constructor(
     public hubName: string,
     public url: string,
