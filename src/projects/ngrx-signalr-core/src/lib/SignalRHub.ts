@@ -51,7 +51,9 @@ export class SignalRHub implements ISignalRHub {
       );
 
       this._connection.onclose((error) => {
-        this._errorSubject.next(error);
+        if (error) {
+          this._errorSubject.next(error);
+        }
         this._stateSubject.next(disconnected);
       });
       this._connection.onreconnecting(() => {
@@ -90,7 +92,6 @@ export class SignalRHub implements ISignalRHub {
       .stop()
       .then((_) => {
         this._stopSubject.next();
-        this._stateSubject.next(disconnected);
       })
       .catch((error) => this._errorSubject.next(error));
 
