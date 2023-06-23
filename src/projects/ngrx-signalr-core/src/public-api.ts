@@ -12,6 +12,7 @@ export {
   signalrHubFailedToStart,
   signalrConnected,
   signalrReconnecting,
+  signalrReconnected,
   signalrDisconnected,
   signalrError,
   hubNotFound,

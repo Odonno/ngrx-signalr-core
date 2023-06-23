@@ -23,6 +23,7 @@ import {
   signalrHubFailedToStart,
   stopSignalRHub,
   signalrReconnecting,
+  signalrReconnected,
 } from "./actions";
 import {
   ofHub,
@@ -31,7 +32,7 @@ import {
   mergeMapHubToAction,
 } from "./operators";
 import { Action } from "@ngrx/store";
-import { connected, disconnected, reconnecting } from "./hubStatus";
+import { connected, disconnected, reconnecting, reconnected } from "./hubStatus";
 import { Observable } from "rxjs";
 import { TypedAction } from "@ngrx/store/src/models";
 
@@ -111,6 +112,14 @@ export class SignalREffects {
             if (state === reconnecting) {
               return of(
                 signalrReconnecting({
+                  hubName: action.hubName,
+                  url: action.url,
+                })
+              );
+            }
+            if (state === reconnected) {
+              return of(
+                signalrReconnected({
                   hubName: action.hubName,
                   url: action.url,
                 })
