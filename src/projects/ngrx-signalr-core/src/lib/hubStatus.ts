@@ -5,6 +5,7 @@ export const unstarted = "unstarted";
 export const connected = "connected";
 export const disconnected = "disconnected";
 export const reconnecting = "reconnecting";
+export const reconnected = "reconnected";
 
 /**
  * List of given states a SignalR can be.
@@ -14,6 +15,7 @@ export const SignalRStates = {
   connected,
   disconnected,
   reconnecting,
+  reconnected,
 };
 
 /**
@@ -38,7 +40,8 @@ export type SignalRHubState =
   | typeof unstarted
   | typeof connected
   | typeof disconnected
-  | typeof reconnecting;
+  | typeof reconnecting
+  | typeof reconnected;
 
 /**
  * Status definition of a SignalR hub.
