@@ -98,11 +98,11 @@ export class SignalRHub implements ISignalRHub {
     return this._stopSubject.asObservable();
   }
 
-  on<T>(eventName: string) {
+  on<T extends Array<unknown>>(eventName: string) {
     return new Observable<T>((observer) => {
       const connection = this.ensureConnectionOpened();
 
-      const callback = (data: T) => observer.next(data);
+      const callback = (...args: T) => observer.next(args)
 
       connection.on(eventName, callback);
 
