@@ -52,7 +52,7 @@ export interface ISignalRHub {
    * Start to listen to a SignalR event from the server.
    * @param eventName Name of the event to listen.
    */
-  on<T>(eventName: string): Observable<T>;
+  on<T extends Array<unknown>>(eventName: string): Observable<T>;
   /**
    * Receive realtime stream events from the server
    * @param methodName Name of the stream.
