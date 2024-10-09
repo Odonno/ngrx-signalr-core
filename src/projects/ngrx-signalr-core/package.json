@@ -16,12 +16,12 @@
   },
   "homepage": "https://github.com/Odonno/ngrx-signalr-core#readme",
   "peerDependencies": {
-    "@angular/common": ">=15.0.0",
-    "@angular/core": ">=15.0.0",
+    "@angular/common": ">=16.0.0",
+    "@angular/core": ">=16.0.0",
     "@microsoft/signalr": ">=3.0.0",
-    "@ngrx/effects": ">=15.0.0",
-    "@ngrx/store": ">=15.0.0",
+    "@ngrx/effects": ">=16.0.0",
+    "@ngrx/store": ">=16.0.0",
     "rxjs": ">=6.5.0",
-    "typescript": ">=4.2.0"
+    "typescript": ">=5.0.0"
   }
 }
