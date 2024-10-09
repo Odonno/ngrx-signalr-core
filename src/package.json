@@ -20,8 +20,8 @@
     "@angular/platform-browser-dynamic": "^17.3.12",
     "@angular/router": "^17.3.12",
     "@microsoft/signalr": "^3.1.0",
-    "@ngrx/effects": "^16.3.0",
-    "@ngrx/store": "^16.3.0",
+    "@ngrx/effects": "^17.2.0",
+    "@ngrx/store": "^17.2.0",
     "rxjs": "~6.6.7",
     "tslib": "^2.0.0",
     "zone.js": "~0.14.10"

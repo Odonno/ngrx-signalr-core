@@ -19,8 +19,8 @@
     "@angular/common": ">=17.0.0",
     "@angular/core": ">=17.0.0",
     "@microsoft/signalr": ">=3.0.0",
-    "@ngrx/effects": ">=16.0.0",
-    "@ngrx/store": ">=16.0.0",
+    "@ngrx/effects": ">=17.0.0",
+    "@ngrx/store": ">=17.0.0",
     "rxjs": ">=6.5.0",
     "typescript": ">=5.2.0"
   }
