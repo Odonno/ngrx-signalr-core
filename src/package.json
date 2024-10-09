@@ -20,11 +20,12 @@
     "@angular/platform-browser-dynamic": "^18.2.7",
     "@angular/router": "^18.2.7",
     "@microsoft/signalr": "^3.1.0",
-    "@ngrx/effects": "^17.2.0",
-    "@ngrx/store": "^17.2.0",
+    "@ngrx/effects": "^18.1.0",
+    "@ngrx/store": "^18.1.0",
     "rxjs": "~6.6.7",
     "tslib": "^2.0.0",
-    "zone.js": "~0.14.10"
+    "zone.js": "~0.14.10",
+    "@ngrx/operators": "^18.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.7",

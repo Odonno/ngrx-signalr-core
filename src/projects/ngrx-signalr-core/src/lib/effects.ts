@@ -32,9 +32,13 @@ import {
   mergeMapHubToAction,
 } from "./operators";
 import { Action } from "@ngrx/store";
-import { connected, disconnected, reconnecting, reconnected } from "./hubStatus";
+import {
+  connected,
+  disconnected,
+  reconnecting,
+  reconnected,
+} from "./hubStatus";
 import { Observable } from "rxjs";
-import { TypedAction } from "@ngrx/store/src/models";
 
 @Injectable({
   providedIn: "root",
@@ -98,7 +102,11 @@ export class SignalREffects {
           mergeMap((state) => {
             if (state === connected) {
               return of(
-                signalrConnected({ hubName: action.hubName, url: action.url, connectionId: hub.connectionId })
+                signalrConnected({
+                  hubName: action.hubName,
+                  url: action.url,
+                  connectionId: hub.connectionId,
+                })
               );
             }
             if (state === disconnected) {
@@ -180,7 +188,7 @@ export class SignalREffects {
 type SignalrDisconnectedAction = {
   hubName: string;
   url: string;
-} & TypedAction<"@ngrx/signalr/disconnected">;
+} & Action<"@ngrx/signalr/disconnected">;
 
 export type ReconnectEffectOptions = {
   /**
