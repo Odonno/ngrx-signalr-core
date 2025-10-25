@@ -1,0 +1,22 @@
+name: Release Workflow
+
+on: workflow_dispatch
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+
+      - run: bun install
+
+      - run: bun run build:prod
+        working-directory: src
+
+      - run: bun publish
+        working-directory: src/dist/ngrx-signalr-core
