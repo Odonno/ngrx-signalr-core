@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "packageManager": "bun@1.2.22",
+  "workspaces": [
+    "src",
+    "samples/realtimeFeed/realtime-feed"
+  ]
+}
